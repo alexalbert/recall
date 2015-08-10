@@ -1,0 +1,53 @@
+<template>
+  <section class="au-animate">
+      <button click.trigger="newNote()" onclick="autosizeNew()">New Note</button>
+      <div class="row" style="margin-top: 30px">
+        <div class="col-xs-3">
+          <div repeat.for="tag of tags">
+            <label click.delegate="$parent.tagClicked(tag.name)"
+             style="color: ${tag.name === $parent.selectedTag ? 'red' : 'black'}"
+            >${tag.name}</label>
+          </div>
+        </div>
+        <div class="col-xs-9">
+        <!-- <div repeat.for="note of notes | filterByTags : $parent.tags" style="margin-top: 15px"> -->
+        <div repeat.for="note of notes" style="margin-top: 15px">
+              <textarea class='form-control custom-control'
+                style="resize:both"
+                value.bind="note.text | updateDb : $parent : $index">
+              </textarea>
+              <textarea  class='form-control custom-control'
+                value.bind="note.tags | tag : $parent : $index">
+              </textarea>
+              <div class="row" show.bind="note.ts_cre">
+                Created: <label>${note.ts_cre | dateFormat }</label>
+                Updated: <label>${note.ts_upd | dateFormat }</label>
+              </div>
+              <!-- <button click.trigger="$parent.makeAuto()">Auto</button> -->
+              <!-- <button click.trigger="$parent.updateNote(note)">Save</button>
+              <button click.trigger="$parent.printNote($index)">Show</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+</template>
+
+<script src="/jspm_packages/github/jackmoore/autosize@3.0.8/dist/autosize.js"></script>
+<script type="text/javascript">
+   var i = setInterval(function ()
+   {
+       if ($('textarea').length)
+       {
+           clearInterval(i);
+           autosize($('textarea'));
+       }
+   }, 100);
+
+   function autosizeNew() {
+     setTimeout(function() { autosize([$('textarea')[0]]); }, 200);
+   }
+</script>
+<!-- autosize(document.getElementById('autosize-example')); -->
+
+<!-- onkeyup.delegate="$parent.onChangeNote($index)" -->
