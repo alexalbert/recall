@@ -1,6 +1,6 @@
 module.exports = {
   TOKEN_SECRET: process.env.TOKEN_SECRET || 'aurelia_token',
-  MONGO_URI: process.env.MONGO_URI || 'localhost:27017',
+  MONGO_URI: process.env.MONGO_URI || 'localhost:27017/recall',
   FACEBOOK_SECRET: process.env.FACEBOOK_SECRET || 'Facebook Client Secret',
   FOURSQUARE_SECRET: process.env.FOURSQUARE_SECRET || 'Foursquare Client Secret',
   GOOGLE_SECRET: process.env.GOOGLE_SECRET || 'wv_cdSxZu7h81cnc9140Te52',
