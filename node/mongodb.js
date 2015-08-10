@@ -3,6 +3,7 @@
 var config = require('./config');
 var mongoose = require('mongoose');
 var ObjectId = require('mongoose').Schema.Types.ObjectId;
+var db = require('./mongodb');
 
 ////////////////////////  USER /////////////////////////
 
@@ -52,14 +53,14 @@ var itemSchema = new mongoose.Schema({
   _id: ObjectId,
   userId: ObjectId,
   text: { type: String },
-  tags: { type: [String] },
+  tags: { type: [String], index: true },
   ts_cre: Date,
   ts_upd: Date,
 });
 
 var item = mongoose.model('Item', itemSchema);
 
-itemSchema.index({ tags: 1, ts_cre: 1 });
+//itemSchema.index({ tags: 1, ts_cre: 1 });
 
 exports.Item = function () {
     return item;
@@ -81,6 +82,13 @@ exports.Tag = function () {
 
 
 mongoose.connect(config.MONGO_URI);
-mongoose.connection.on('error', function(err) {
-  console.log('Error: Could not connect to MongoDB. Did you forget to run `mongod`?'.red);
+var db = mongoose.connection;
+db.on('error', function(err) {
+  console.log(('Error: Could not connect to MongoDB. Did you forget to run `mongod` ?' + err).red);
+});
+
+db.once('open', function() {
+    db.collections.items.createIndex({text: "text"}, function(err, res) {
+      if (err)  console.log(err.red);
+    });
 });

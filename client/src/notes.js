@@ -14,10 +14,14 @@ export class Notes {
 
 		this.auth = auth;
 		this.http = http;
+		this.notes = [];
+		this.tags = [];
+		this.keywords = "";
 
 		this.updateDelay = 10000;
 
 		this.changes = new Map();
+//		this.notesMap = new Map();
 	};
 
 	saveUpdates() {
@@ -50,7 +54,11 @@ export class Notes {
 							.userId).asGet().send()
 						.then((data) => {
 							var tags = JSON.parse(data.response);
-							this.tags = tags.map((tag) => { return {name: tag, checked: false} } );
+							if (tags.length) {
+								tags = [];
+							} else {
+								this.tags = tags.map((tag) => { return {name: tag, checked: false} } );
+							}
 						});
 
 						return Promise.all([promise1, promise2]);
@@ -70,29 +78,58 @@ export class Notes {
 		return this.http.createRequest('http://localhost:8000/api/getNotes?' + params).asGet().send()
 		 .then((data) => {
 			 this.notes = JSON.parse(data.response);
+//			 this.createNoteMap(this.notes);
 		 });
 	}
 
   newNote() {
-		this.notes.unshift({text:"", tags: ""});
+		var note = {text:"", tags: "", id: this.uuid()};
+		this.notes.unshift(note);
+//		this.notesMap.set(note.id, note);
 //		autosize([$("textarea")[0]]);
 	}
 
 	updateNote(note) {
 		if (!note.ts_cre) note.ts_cre = new Date();
 		note.ts_upd = new Date();
+		note.userId = this.userId;
 		this.addNewTags(note.tags);
 		this.http.createRequest('http://localhost:8000/api/saveNote')
 			.asPost()
 			.withContent(JSON.stringify(note))
 			.withHeader('Content-Type', 'application/json')
-			.send();
+			.send().then(res => {
+				note._id = res.response.replace(/\"/g, "");
+			});
 	}
 
 	onChangeNote(index) {
-		console.log("+++++++++++++ " + index);
+		console.log("+++++++++++++ " + id);
 		this.updateNote(this.notes[index]);
 	}
+
+	search() {
+		if (!this.keywords || !this.keywords.length) return;
+
+		var params = 'user=' + this.userId;
+		if (this.selectedTag) {
+			params += ('&tag=' + this.selectedTag);
+		}
+		params += ('&keywords=' + this.keywords);
+
+		return this.http.createRequest('http://localhost:8000/api/searchNotes?' + params).asGet().send()
+		 .then((data) => {
+			 this.notes = JSON.parse(data.response);
+	//		 this.createNoteMap(this.notes);
+		 });
+	 }
+
+	// createNoteMap(notes) {
+	// 	notes.forEach(note => {
+	// 		 note.id = this.uuid();
+	// 		 this.notesMap.set(note.id, note.id);
+	// 	 });
+	// }
 
 	tagClicked(tagName) {
 		if (this.selectedTag === tagName) {
@@ -104,17 +141,16 @@ export class Notes {
 		}
 	}
 
-	printNote(index) {
-		console.log(this.notes[index].text);
-	}
-
 	addChange(model, index) {
-		setTimeout(() => {
-				model.changes.set(model.notes[index]._id, model.notes[index]);
-		}, 100);
+		model.changes.set(model.notes[index].id, model.notes[index]);
+		console.log(model.changes.size);
+		// setTimeout(() => {
+		// 		model.changes.set(model.notesMap.get(id), model.notesMap.get(id));
+		// }, 100);
 	}
 
 	addNewTags(tags) {
+		if (tags === "") return;
 		tags.forEach(tag => {
 			var exists = this.tags.filter(t => {
 				return t.name === tag.name;
@@ -123,6 +159,13 @@ export class Notes {
 				this.tags.push({name: tag, checked: true});
 			}
 		})
+	}
+
+	uuid() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+	    return v.toString(16);
+		});
 	}
 }
 
@@ -149,9 +192,9 @@ export class TagValueConverter {
 	}
 	fromView(tags, model, index) {
 		model.addChange(model, index);
+		if (tags === "") return [];
 		var tagsSs = tags.replace(",", " ");
 		var tagsA = tagsSs.split(' ');
-//		model.addNewTags(tagsA);
 		return tagsA;
 	}
 }
