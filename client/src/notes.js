@@ -1,28 +1,50 @@
 import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {inject} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-http-client';
-//import 'jackmoore/autosize@3.0.8/dist/autosize'
+import {config} from './config';
+import autosizeTextarea from 'jackmoore/autosize@3.0.8/dist/autosize'
 
 @inject(AuthService, HttpClient)
 export class Notes {
 	constructor(auth, http) {
-		// http.configure(config => {
-		//   config
-		//     .useStandardConfiguration()
-		//     .withBaseUrl('http://localhost:8000/auth/me');
-		// });
-
 		this.auth = auth;
 		this.http = http;
+
+		this.updateDelay = 10000;
 		this.notes = [];
 		this.tags = [];
 		this.keywords = "";
-
-		this.updateDelay = 10000;
-
 		this.changes = new Map();
-//		this.notesMap = new Map();
 	};
+
+	activate() {
+		console.log(localStorage.aurelia_token);
+		this.scheduleSaveUpdates();
+
+		this.http.createRequest(config.authURL)
+			.asGet()
+			.withHeader('Authorization', 'Bearer ' + localStorage.aurelia_token).send()
+			.then(data => {
+				this.profile = JSON.parse(data.response);
+				this.userId = this.profile._id;
+			})
+			.then(() => {
+				 var promise1 = this.getNotes();
+
+					var promise2 = this.http.createRequest(config.getTagsURL + '?user=' + this
+							.userId).asGet().send()
+						.then((data) => {
+							this.tags = JSON.parse(data.response);
+						});
+
+						return Promise.all([promise1, promise2]);
+			});
+	}
+
+	deactivate() {
+		clearInterval(this.interval);
+		this.saveUpdates();
+	}
 
 	saveUpdates() {
 		this.changes.forEach(value => this.updateNote(value));
@@ -36,59 +58,22 @@ export class Notes {
 			this.updateDelay);
 	}
 
-	activate() {
-		console.log(localStorage.aurelia_token);
-		this.scheduleSaveUpdates();
-
-		this.http.createRequest('http://localhost:8000/auth/me')
-			.asGet()
-			.withHeader('Authorization', 'Bearer ' + localStorage.aurelia_token).send()
-			.then(data => {
-				this.profile = JSON.parse(data.response);
-				this.userId = this.profile._id;
-			})
-			.then(() => {
-				 var promise1 = this.getNotes();
-
-					var promise2 = this.http.createRequest('http://localhost:8000/api/getTags?user=' + this
-							.userId).asGet().send()
-						.then((data) => {
-//							var tags = JSON.parse(data.response);
-							this.tags = JSON.parse(data.response);
-
-							// if (!tags.length) {
-							// 	tags = [];
-							// } else {
-							// 	this.tags = tags.map((tag) => { return {name: tag, checked: false} } );
-							// }
-						});
-
-						return Promise.all([promise1, promise2]);
-			});
-	}
-
-	deactivate() {
-		clearInterval(this.interval);
-		this.saveUpdates();
-	}
-
 	getNotes(tag) {
-		var params = 'user=' + this.userId;
+		var params = '?user=' + this.userId;
 		if (tag) {
 			params += ('&tag=' + tag);
 		}
-		return this.http.createRequest('http://localhost:8000/api/getNotes?' + params).asGet().send()
+		return this.http.createRequest(config.getNotesURL + params).asGet().send()
 		 .then((data) => {
 			 this.notes = JSON.parse(data.response);
-//			 this.createNoteMap(this.notes);
+			 this.autosizeNotes();
 		 });
 	}
 
   newNote() {
 		var note = {text:"", tags: "", id: this.uuid()};
 		this.notes.unshift(note);
-//		this.notesMap.set(note.id, note);
-//		autosize([$("textarea")[0]]);
+		this.autosizeNotes();
 	}
 
 	updateNote(note) {
@@ -98,7 +83,7 @@ export class Notes {
 		if (note.tags === "") delete note.tags;
 
 		this.addNewTags(note.tags);
-		this.http.createRequest('http://localhost:8000/api/saveNote')
+		this.http.createRequest(config.saveNoteURL)
 			.asPost()
 			.withContent(JSON.stringify(note))
 			.withHeader('Content-Type', 'application/json')
@@ -107,33 +92,21 @@ export class Notes {
 			});
 	}
 
-	onChangeNote(index) {
-		console.log("+++++++++++++ " + id);
-		this.updateNote(this.notes[index]);
-	}
-
 	search() {
 		if (!this.keywords || !this.keywords.length) return;
 
-		var params = 'user=' + this.userId;
+		var params = '?user=' + this.userId;
 		if (this.selectedTag) {
 			params += ('&tag=' + this.selectedTag);
 		}
 		params += ('&keywords=' + this.keywords);
 
-		return this.http.createRequest('http://localhost:8000/api/searchNotes?' + params).asGet().send()
+		return this.http.createRequest(config.searchNotesURL + params).asGet().send()
 		 .then((data) => {
 			 this.notes = JSON.parse(data.response);
-	//		 this.createNoteMap(this.notes);
+			 this.autosizeNotes();
 		 });
 	 }
-
-	// createNoteMap(notes) {
-	// 	notes.forEach(note => {
-	// 		 note.id = this.uuid();
-	// 		 this.notesMap.set(note.id, note.id);
-	// 	 });
-	// }
 
 	tagClicked(tagName) {
 		if (this.selectedTag === tagName) {
@@ -148,9 +121,6 @@ export class Notes {
 	addChange(model, index) {
 		model.changes.set(model.notes[index].id, model.notes[index]);
 		console.log(model.changes.size);
-		// setTimeout(() => {
-		// 		model.changes.set(model.notesMap.get(id), model.notesMap.get(id));
-		// }, 100);
 	}
 
 	addNewTags(tags) {
@@ -165,6 +135,12 @@ export class Notes {
 		})
 	}
 
+	autosizeNotes() {
+		setTimeout(() => {
+			autosizeTextarea($("textarea"));
+		}, 200);
+	}
+
 	uuid() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 	    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -176,9 +152,6 @@ export class Notes {
 export class UpdateDbValueConverter {
 	fromView(text, model, index) {
 		model.addChange(model, index);
-		// model.notes[index].text = text;
-		// model.onChangeNote(index);
-		// console.log('filter' + text);
 		return text;
 	}
 }
