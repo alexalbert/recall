@@ -53,12 +53,14 @@ export class Notes {
 					var promise2 = this.http.createRequest('http://localhost:8000/api/getTags?user=' + this
 							.userId).asGet().send()
 						.then((data) => {
-							var tags = JSON.parse(data.response);
-							if (tags.length) {
-								tags = [];
-							} else {
-								this.tags = tags.map((tag) => { return {name: tag, checked: false} } );
-							}
+//							var tags = JSON.parse(data.response);
+							this.tags = JSON.parse(data.response);
+
+							// if (!tags.length) {
+							// 	tags = [];
+							// } else {
+							// 	this.tags = tags.map((tag) => { return {name: tag, checked: false} } );
+							// }
 						});
 
 						return Promise.all([promise1, promise2]);
@@ -93,6 +95,8 @@ export class Notes {
 		if (!note.ts_cre) note.ts_cre = new Date();
 		note.ts_upd = new Date();
 		note.userId = this.userId;
+		if (note.tags === "") delete note.tags;
+
 		this.addNewTags(note.tags);
 		this.http.createRequest('http://localhost:8000/api/saveNote')
 			.asPost()
@@ -150,13 +154,13 @@ export class Notes {
 	}
 
 	addNewTags(tags) {
-		if (tags === "") return;
+		if (!tags) return;
 		tags.forEach(tag => {
 			var exists = this.tags.filter(t => {
-				return t.name === tag.name;
+				return t === tag;
 			});
 			if (!exists.length) {
-				this.tags.push({name: tag, checked: true});
+				this.tags.push(tag);
 			}
 		})
 	}
