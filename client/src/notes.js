@@ -1,14 +1,13 @@
 import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {inject} from 'aurelia-framework';
-import {HttpClient} from 'aurelia-http-client';
-import {config} from './config';
+import {ServerApi} from './server-api';
 import autosizeTextarea from 'jackmoore/autosize@3.0.8/dist/autosize'
 
-@inject(AuthService, HttpClient)
+@inject(AuthService, ServerApi)
 export class Notes {
-	constructor(auth, http) {
+	constructor(auth, server) {
 		this.auth = auth;
-		this.http = http;
+		this.server = server;
 
 		this.updateDelay = 10000;
 		this.notes = [];
@@ -21,9 +20,7 @@ export class Notes {
 		console.log(localStorage.aurelia_token);
 		this.scheduleSaveUpdates();
 
-		this.http.createRequest(config.authURL)
-			.asGet()
-			.withHeader('Authorization', 'Bearer ' + localStorage.aurelia_token).send()
+		this.server.authorize()
 			.then(data => {
 				this.profile = JSON.parse(data.response);
 				this.userId = this.profile._id;
@@ -31,8 +28,7 @@ export class Notes {
 			.then(() => {
 				 var promise1 = this.getNotes();
 
-					var promise2 = this.http.createRequest(config.getTagsURL + '?user=' + this
-							.userId).asGet().send()
+					var promise2 = this.server.getTags(this.userId)
 						.then((data) => {
 							this.tags = JSON.parse(data.response);
 						});
@@ -59,11 +55,7 @@ export class Notes {
 	}
 
 	getNotes(tag) {
-		var params = '?user=' + this.userId;
-		if (tag) {
-			params += ('&tag=' + tag);
-		}
-		return this.http.createRequest(config.getNotesURL + params).asGet().send()
+		return this.server.getNotes(this.userId, tag)
 		 .then((data) => {
 			 this.notes = JSON.parse(data.response);
 			 this.autosizeNotes();
@@ -83,11 +75,8 @@ export class Notes {
 		if (note.tags === "") delete note.tags;
 
 		this.addNewTags(note.tags);
-		this.http.createRequest(config.saveNoteURL)
-			.asPost()
-			.withContent(JSON.stringify(note))
-			.withHeader('Content-Type', 'application/json')
-			.send().then(res => {
+		this.server.updateNote(note)
+			.then(res => {
 				note._id = res.response.replace(/\"/g, "");
 			});
 	}
@@ -101,7 +90,7 @@ export class Notes {
 		}
 		params += ('&keywords=' + this.keywords);
 
-		return this.http.createRequest(config.searchNotesURL + params).asGet().send()
+		return this.server.search(this.userId, this.tag, this.keywords)
 		 .then((data) => {
 			 this.notes = JSON.parse(data.response);
 			 this.autosizeNotes();
@@ -138,7 +127,7 @@ export class Notes {
 	autosizeNotes() {
 		setTimeout(() => {
 			autosizeTextarea($("textarea"));
-		}, 200);
+		}, 10);
 	}
 
 	uuid() {
