@@ -1,4 +1,25 @@
 var configForDevelopment = {
+  // httpInterceptor: true,
+  // loginOnSignup: true,
+  // baseUrl: '/',
+  loginRedirect: '/',
+  // logoutRedirect: '/',
+  // signupRedirect: '/login',
+  // loginUrl: '/auth/login',
+  // signupUrl: '/auth/signup',
+  // profileUrl: '/auth/me',
+  // loginRoute: '/login',
+  // signupRoute: '/signup',
+  // tokenRoot: false,
+  // tokenName: 'token',
+  // tokenPrefix: 'aurelia',
+  // unlinkUrl: '/auth/unlink/',
+  // unlinkMethod: 'get',
+  // authHeader: 'Authorization',
+  // authToken: 'Bearer',
+  // withCredentials: true,
+  // platform: 'browser',
+  // storage: 'localStorage',
     providers: {
         google: {
             clientId: '295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'

@@ -20,12 +20,12 @@ export class Notes {
 		console.log(localStorage.aurelia_token);
 		this.scheduleSaveUpdates();
 
-		this.server.authorize()
+		this.auth.getMe()
 			.then(data => {
-				this.profile = JSON.parse(data.response);
+				this.profile = data;
 				this.userId = this.profile._id;
 			})
-			.then(() => {
+   		.then(() => {
 				 var promise1 = this.getNotes();
 
 					var promise2 = this.server.getTags(this.userId)

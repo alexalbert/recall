@@ -1,28 +1,32 @@
 <template>
   <section class="au-animate">
     <div class="row" style="margin-top: 30px">
-      <input type="text" class="col-xs-offset-1 col-xs-4  input-mini" value.bind="keywords">
-      <button class="col-xs-offset-1 col-xs-1 btn btn-mini btn-primary"  click.trigger="search()" disabled.bind="!keywords.length">Search</button>
-      <button class="col-xs-offset-1 col-xs-1 btn btn-mini btn-primary"  click.trigger="search()" disabled.bind="!keywords.length">Reset</button>
-      <button class="col-xs-offset-1 col-xs-2 btn btn-mini btn-primary"  click.trigger="newNote()" onclick="autosizeNew()">New Note</button>
+      <input type="text" class="col-xs-offset-1 col-xs-4  input-mini"
+          placeholder="keywords" value.bind="keywords">
+      <button class="col-xs-1 btn btn-xs btn-primary" style="margin-left: 10px"
+          click.trigger="search()" disabled.bind="!keywords.length">Search</button>
+      <button class="col-xs-1 btn btn-xs btn-primary"  style="margin-left: 10px"
+          click.trigger="search()" disabled.bind="!keywords.length">Reset</button>
+      <button class="col-xs-1 btn btn-xs btn-primary pull-right"  click.trigger="newNote()" onclick="autosizeNew()">New Note</button>
     </div>
+    <panel class>
     <div class="row" style="margin-top: 30px">
         <div class="col-xs-1">
           <div repeat.for="tag of tags">
-            <button click.delegate="$parent.tagClicked(tag)"
-             class="btn btn-mini btn-info"
+            <label click.delegate="$parent.tagClicked(tag)"
              style="color: ${tag === $parent.selectedTag ? 'red' : 'black'}"
-            >${tag}</button>
+            >${tag}</label>
           </div>
         </div>
         <div class="col-xs-10">
         <div repeat.for="note of notes" style="margin-top: 15px">
               <textarea class='form-control custom-control'
-                style="resize:both"
+                style="background: aliceblue"
                 placeholder="text"
                 value.bind="note.text | updateDb : $parent : $index">
               </textarea>
-              <textarea  class='form-control custom-control'
+              <textarea  class="form-control custom-control"
+                style="background: lavender"
                 placeholder="tags"
                 rows="1"
                 value.bind="note.tags | tag : $parent : $index">

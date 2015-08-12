@@ -1,44 +1,22 @@
 import 'bootstrap';
 import 'bootstrap/css/bootstrap.css!';
-import {
-  AuthorizeStep
-}
-from 'paulvanbladel/aurelia-auth';
-import {
-  Router
-}
-from 'aurelia-router';
 
+import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
+import AppRouterConfig from 'app_router_config';
+import HttpClientConfig from 'paulvanbladel/aurelia-auth/app.httpClient.config';
+@inject(Router,HttpClientConfig,AppRouterConfig )
 export class App {
-  router: Router;
 
-  configureRouter(config, router) {
-    config.title = 'Total Recall';
-
-    config.addPipelineStep('authorize', AuthorizeStep);
-
-    config.map([{
-      route: ['', 'notes'],
-      name: 'notes',
-      moduleId: './notes',
-      nav: true,
-      title: 'Notes',
-      auth: true
-    }, {
-      route: 'login',
-      name: 'login',
-      moduleId: './login',
-      nav: true,
-      title: 'Login'
-    }, {
-      route: 'profile',
-      name: 'profile',
-      moduleId: './profile',
-      nav: true,
-      title: 'Profile',
-      auth: true
-    }, ]);
-
+  constructor(router, httpClientConfig, appRouterConfig){
     this.router = router;
+    this.httpClientConfig = httpClientConfig;
+    this.appRouterConfig = appRouterConfig;
+  }
+
+  activate(){
+
+    this.httpClientConfig.configure();
+    this.appRouterConfig.configure();
   }
 }

@@ -21,6 +21,13 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
+        <li class="nav navbar-nav">
+          <a  show.bind="!userName" href="#/login" style="margin-right: 100px">Login</a>
+          <a  show.bind="userName" href="#/profile" style="margin-right: 100px">Hello ${userName}!</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
         <li class="loader" if.bind="router.isNavigating">
           <i class="fa fa-spinner fa-spin fa-2x"></i>
         </li>

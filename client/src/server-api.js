@@ -9,12 +9,6 @@ export class ServerApi {
 		this.http = http;
 	}
 
-  authorize() {
-    return this.http.createRequest(config.authURL)
-    .asGet()
-    .withHeader('Authorization', 'Bearer ' + localStorage.aurelia_token).send();
-  }
-
 	getTags(user) {
 		return this.http.createRequest(config.getTagsURL + '?user=' + user).asGet().send();
 	}
