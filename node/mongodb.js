@@ -3,6 +3,7 @@
 var config = require('./config');
 var mongoose = require('mongoose');
 var ObjectId = require('mongoose').Schema.Types.ObjectId;
+
 var db = require('./mongodb');
 
 ////////////////////////  USER /////////////////////////
@@ -43,7 +44,7 @@ userSchema.methods.comparePassword = function(password, done) {
 
 var user = mongoose.model('User', userSchema);
 
-exports.User = function () {
+var User = function () {
     return user;
 }
 
@@ -60,26 +61,54 @@ var itemSchema = new mongoose.Schema({
 
 var item = mongoose.model('Item', itemSchema);
 
-//itemSchema.index({ tags: 1, ts_cre: 1 });
-
-exports.Item = function () {
+var Item = function () {
     return item;
 }
 
-////////////////////////  TAG /////////////////////////
+var SearchNotes = function(id, keywords, tag) {
+  var query = {
+    userId:  mongoose.Types.ObjectId(id),
+    $text : { $search : keywords }
+  };
+  if (tag) {
+    query.tags = tag;
+  }
 
-var tagSchema = new mongoose.Schema({
-  name: { type: String },
-  sharedWith: { type: [String] },
-});
-
-var tag = mongoose.model('tag', tagSchema);
-
-exports.Tag = function () {
-    return tag;
+  return  Item().find(query).exec();
 }
 
+var GetNotes = function(id, tag) {
+  var query = {userId: mongoose.Types.ObjectId(id)};
+  if (tag) {
+    query.tags = tag;
+  }
+  return Item().find(query).sort({ts_upd: -1}).exec();
+}
 
+var GetTags = function(id) {
+  return  Item().distinct('tags', { userId:  mongoose.Types.ObjectId(id) }).exec();
+}
+
+var SaveNote = function(doc) {
+  var itemModel = Item();
+
+  var note = new itemModel(doc);
+
+  if (!note._doc._id) {
+    note._doc._id = new mongoose.mongo.ObjectId();
+  }
+  var query = {"_id": note._doc._id };
+
+  return itemModel.findOneAndUpdate(query, note, {upsert: true}).exec();
+}
+
+module.exports = {
+  User: User,
+  SearchNotes : SearchNotes,
+  GetNotes : GetNotes,
+  GetTags: GetTags,
+  SaveNote: SaveNote
+}
 
 mongoose.connect(config.MONGO_URI);
 var db = mongoose.connection;
