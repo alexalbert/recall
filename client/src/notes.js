@@ -55,6 +55,7 @@ export class Notes {
 	}
 
 	getNotes(tag) {
+		this.saveUpdates();
 		return this.server.getNotes(this.userId, tag)
 		 .then((data) => {
 			 this.notes = JSON.parse(data.response);
@@ -63,7 +64,7 @@ export class Notes {
 	}
 
   newNote() {
-		var note = {text:"", tags: "", id: this.uuid()};
+		var note = {text:"", tags: this.selectedTag ? [this.selectedTag] : [], id: this.uuid()};
 		this.notes.unshift(note);
 		this.autosizeNotes();
 	}
@@ -83,6 +84,8 @@ export class Notes {
 
 	search() {
 		if (!this.keywords || !this.keywords.length) return;
+
+		this.saveUpdates();
 
 		var params = '?user=' + this.userId;
 		if (this.selectedTag) {
@@ -153,7 +156,7 @@ export class DateFormatValueConverter {
 
 export class TagValueConverter {
 	toView(tags) {
-		if (!tags || tags.lengt === 0) return "";
+		if (!tags || tags.length === 0) return "";
 		return tags.join(' ');
 	}
 	fromView(tags, model, index) {
