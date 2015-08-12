@@ -98,7 +98,13 @@ export class Notes {
 			 this.notes = JSON.parse(data.response);
 			 this.autosizeNotes();
 		 });
-	 }
+ }
+
+ resetSearch() {
+ 		this.keywords = "";
+ 		this.getNotes(this.selectedTag);
+ }
+
 
 	tagClicked(tagName) {
 		if (this.selectedTag === tagName) {

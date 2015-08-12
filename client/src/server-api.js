@@ -21,17 +21,17 @@ export class ServerApi {
 	}
 
 	search(user, tag, keywords) {
-		if (!this.keywords || !this.keywords.length) return;
+		if (!keywords || !keywords.length) return;
 
 		var params = '?user=' + user;
-		if (this.selectedTag) {
-			params += ('&tag=' + this.selectedTag);
+		if (tag) {
+			params += ('&tag=' + tag);
 		}
-		params += ('&keywords=' + this.keywords);
+		params += ('&keywords=' + keywords);
 
 		return this.http.createRequest(config.searchNotesURL + params).asGet().send();
 	}
-
+	
 	updateNote(note) {
 		return this.http.createRequest(config.saveNoteURL)
 			.asPost()

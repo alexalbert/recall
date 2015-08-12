@@ -16,7 +16,7 @@
             <button class="col-xs-1 btn btn-xs btn-primary" style="margin-left: 10px"
                 click.trigger="search()" disabled.bind="!keywords.length">Search</button>
             <button class="col-xs-1 btn btn-xs btn-primary"  style="margin-left: 10px"
-                click.trigger="search()" disabled.bind="!keywords.length">Reset</button>
+                click.trigger="resetSearch()" disabled.bind="!keywords.length">Reset</button>
             <button class="col-xs-1 btn btn-xs btn-primary pull-right" style="margin-right: 17px" click.trigger="newNote()">New Note</button>
           </div>
           <div repeat.for="note of notes" style="margin-top: 15px">
