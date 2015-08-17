@@ -44,8 +44,30 @@ userSchema.methods.comparePassword = function(password, done) {
 
 var user = mongoose.model('User', userSchema);
 
+var method = UserModel.prototype;
+//user.find.bind(user);
+
+function UserModel() {
+}
+
+method.findById =  function() {
+//  user.find.bind(user);
+  user.findById.apply(user, Array.prototype.slice.call(arguments));
+}
+
+
+method.findOne = function() {
+//  user.find.bind(user);
+  user.findOne.apply(user, Array.prototype.slice.call(arguments));
+}
+
+method.save = function(us, cb) {
+  var u = new user(us);
+  u.save(cb);
+}
+
 var User = function () {
-    return user;
+    return UserModel;
 }
 
 ////////////////////////  ITEM /////////////////////////
@@ -65,7 +87,7 @@ var Item = function () {
     return item;
 }
 
-var SearchNotes = function(id, keywords, tag) {
+var SearchNotes = function(id, keywords, tag, cb) {
   var query = {
     userId:  mongoose.Types.ObjectId(id),
     $text : { $search : keywords }
@@ -74,22 +96,22 @@ var SearchNotes = function(id, keywords, tag) {
     query.tags = tag;
   }
 
-  return  Item().find(query).exec();
+  return  Item().find(query).exec(cb);
 }
 
-var GetNotes = function(id, tag) {
+var GetNotes = function(id, tag, cb) {
   var query = {userId: mongoose.Types.ObjectId(id)};
   if (tag) {
     query.tags = tag;
   }
-  return Item().find(query).sort({ts_upd: -1}).exec();
+  return Item().find(query).sort({ts_upd: -1}).exec(cb);
 }
 
-var GetTags = function(id) {
-  return  Item().distinct('tags', { userId:  mongoose.Types.ObjectId(id) }).exec();
+var GetTags = function(id, cb) {
+  Item().distinct('tags', { userId:  mongoose.Types.ObjectId(id) }).exec(cb);
 }
 
-var SaveNote = function(doc) {
+var SaveNote = function(doc, cb) {
   var itemModel = Item();
 
   var note = new itemModel(doc);
@@ -99,15 +121,16 @@ var SaveNote = function(doc) {
   }
   var query = {"_id": note._doc._id };
 
-  return itemModel.findOneAndUpdate(query, note, {upsert: true}).exec();
+  itemModel.findOneAndUpdate(query, note, {upsert: true}).exec(cb);
 }
 
 module.exports = {
-  User: User,
+  User: UserModel,
   SearchNotes : SearchNotes,
   GetNotes : GetNotes,
   GetTags: GetTags,
   SaveNote: SaveNote
+
 }
 
 mongoose.connect(config.MONGO_URI);

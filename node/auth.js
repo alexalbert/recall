@@ -1,32 +1,19 @@
 exports.init = function (expapp) {
-//var path = require('path');
-//var qs = require('querystring');
 var async = require('async');
 var bcrypt = require('bcryptjs');
-//var bodyParser = require('body-parser');
-// var colors = require('colors');
-// var cors = require('cors');
-// var express = require('express');
-// var logger = require('morgan');
 var jwt = require('jwt-simple');
 var moment = require('moment');
-//var mongoose = require('mongoose');
 var request = require('request');
-
 var config = require('./config');
-var db = require('./mongodb');
-
-
-
-
-var app;
-var User = db.User();
+var db = config.DB === 'nedb' ? require('./nedb') : require('./mongodb');
 
 if (!expapp) {
   throw new Error("app is required")
 }
 
-app = expapp;
+
+var app = expapp;
+var User = new db.User();
 
 /*
  |--------------------------------------------------------------------------
@@ -92,7 +79,7 @@ app.put('/auth/me', ensureAuthenticated, function(req, res) {
     }
     user.displayName = req.body.displayName || user.displayName;
     user.email = req.body.email || user.email;
-    user.save(function(err) {
+    User.save(user, function(err) {
       res.status(200).end();
     });
   });
@@ -133,7 +120,7 @@ app.post('/auth/signup', function(req, res) {
       email: req.body.email,
       password: req.body.password
     });
-    user.save(function() {
+    User.save(user, function() {
       res.send({ token: createJWT(user) });
     });
   });
@@ -178,7 +165,7 @@ app.post('/auth/google', function(req, res) {
             user.google = profile.sub;
             user.picture = user.picture || profile.picture.replace('sz=50', 'sz=200');
             user.displayName = user.displayName || profile.name;
-            user.save(function() {
+            User.save(user, function() {
               var token = createJWT(user);
               res.send({ token: token });
             });
@@ -190,11 +177,11 @@ app.post('/auth/google', function(req, res) {
           if (existingUser) {
             return res.send({ token: createJWT(existingUser) });
           }
-          var user = new User();
+          var user = {};
           user.google = profile.sub;
           user.picture = profile.picture.replace('sz=50', 'sz=200');
           user.displayName = profile.name;
-          user.save(function(err) {
+          User.save(user, function(err) {
             var token = createJWT(user);
             res.send({ token: token });
           });
@@ -242,7 +229,7 @@ app.post('/auth/github', function(req, res) {
             user.github = profile.id;
             user.picture = user.picture || profile.avatar_url;
             user.displayName = user.displayName || profile.name;
-            user.save(function() {
+            User.save(user, function() {
               var token = createJWT(user);
               res.send({ token: token });
             });
@@ -259,7 +246,7 @@ app.post('/auth/github', function(req, res) {
           user.github = profile.id;
           user.picture = profile.avatar_url;
           user.displayName = profile.name;
-          user.save(function() {
+          User.save(user, function() {
             var token = createJWT(user);
             res.send({ token: token });
           });
@@ -313,7 +300,7 @@ app.post('/auth/linkedin', function(req, res) {
             user.linkedin = profile.id;
             user.picture = user.picture || profile.pictureUrl;
             user.displayName = user.displayName || profile.firstName + ' ' + profile.lastName;
-            user.save(function() {
+            User.save(user, function() {
               var token = createJWT(user);
               res.send({ token: token });
             });
@@ -329,7 +316,7 @@ app.post('/auth/linkedin', function(req, res) {
           user.linkedin = profile.id;
           user.picture = profile.pictureUrl;
           user.displayName = profile.firstName + ' ' + profile.lastName;
-          user.save(function() {
+          User.save(user, function() {
             var token = createJWT(user);
             res.send({ token: token });
           });
@@ -447,7 +434,7 @@ app.post('/auth/facebook', function(req, res) {
             user.facebook = profile.id;
             user.picture = user.picture || 'https://graph.facebook.com/v2.3/' + profile.id + '/picture?type=large';
             user.displayName = user.displayName || profile.name;
-            user.save(function() {
+            User.save(user, function() {
               var token = createJWT(user);
               res.send({ token: token });
             });
@@ -464,7 +451,7 @@ app.post('/auth/facebook', function(req, res) {
           user.facebook = profile.id;
           user.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
           user.displayName = profile.name;
-          user.save(function() {
+          User.save(user, function() {
             var token = createJWT(user);
             res.send({ token: token });
           });
@@ -512,7 +499,7 @@ app.post('/auth/yahoo', function(req, res) {
             }
             user.yahoo = body.profile.guid;
             user.displayName = user.displayName || body.profile.nickname;
-            user.save(function() {
+            User.save(user, function() {
               var token = createJWT(user);
               res.send({ token: token });
             });
@@ -527,7 +514,7 @@ app.post('/auth/yahoo', function(req, res) {
           var user = new User();
           user.yahoo = body.profile.guid;
           user.displayName = body.profile.nickname;
-          user.save(function() {
+          User.save(user, function() {
             var token = createJWT(user);
             res.send({ token: token });
           });
@@ -607,7 +594,7 @@ app.post('/auth/twitter', function(req, res) {
               user.twitter = profile.id;
               user.displayName = user.displayName || profile.name;
               user.picture = user.picture || profile.profile_image_url.replace('_normal', '');
-              user.save(function(err) {
+              User.save(user, function(err) {
                 res.send({ token: createJWT(user) });
               });
             });
@@ -623,7 +610,7 @@ app.post('/auth/twitter', function(req, res) {
             user.twitter = profile.id;
             user.displayName = profile.name;
             user.picture = profile.profile_image_url.replace('_normal', '');
-            user.save(function() {
+            User.save(user, function() {
               res.send({ token: createJWT(user) });
             });
           });
@@ -675,7 +662,7 @@ app.post('/auth/foursquare', function(req, res) {
             user.foursquare = profile.id;
             user.picture = user.picture || profile.photo.prefix + '300x300' + profile.photo.suffix;
             user.displayName = user.displayName || profile.firstName + ' ' + profile.lastName;
-            user.save(function() {
+            User.save(user, function() {
               var token = createJWT(user);
               res.send({ token: token });
             });
@@ -692,7 +679,7 @@ app.post('/auth/foursquare', function(req, res) {
           user.foursquare = profile.id;
           user.picture = profile.photo.prefix + '300x300' + profile.photo.suffix;
           user.displayName = profile.firstName + ' ' + profile.lastName;
-          user.save(function() {
+          User.save(user, function() {
             var token = createJWT(user);
             res.send({ token: token });
           });
@@ -721,7 +708,7 @@ app.get('/auth/unlink/:provider', ensureAuthenticated, function(req, res) {
       return res.status(400).send({ message: 'User not found' });
     }
     user[provider] = undefined;
-    user.save(function() {
+    User.save(user, function() {
       res.status(200).end();
     });
   });
