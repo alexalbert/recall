@@ -5,11 +5,23 @@ var jwt = require('jwt-simple');
 var moment = require('moment');
 var request = require('request');
 var config = require('./config');
-var db = config.DB === 'nedb' ? require('./nedb') : require('./mongodb');
+var db;
+switch (config.DB) {
+  case 'nedb':
+    db = require('./db/nedb');
+    break;
+  case 'mongodb':
+    db = require('./db/mongodb');
+    break;
+  case 'dynamodb':
+    db = require('./db/dynamodb');
+    break;
+}
 
 if (!expapp) {
   throw new Error("app is required")
 }
+
 
 
 var app = expapp;
@@ -63,6 +75,7 @@ function createJWT(user) {
 // app.get('/auth/me', ensureAuthenticated, function(req, res) {
 app.get('/auth/me', ensureAuthenticated, function(req, res) {
   User.findById(req.user, function(err, user) {
+    if (err) console.log(err);
     res.send(user);
   });
 });

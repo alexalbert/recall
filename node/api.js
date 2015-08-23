@@ -1,5 +1,16 @@
 var config = require('./config');
-var db = config.DB === 'nedb' ? require('./nedb') : require('./mongodb');
+var db;
+switch (config.DB) {
+  case 'nedb':
+    db = require('./db/nedb');
+    break;
+  case 'mongodb':
+    db = require('./db/mongodb');
+    break;
+  case 'dynamodb':
+    db = require('./db/dynamodb');
+    break;
+}
 
 exports.init = function (expapp) {
   if (!expapp) {

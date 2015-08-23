@@ -11,7 +11,12 @@ module.exports = {
   TWITTER_SECRET: process.env.TWITTER_SECRET || 'Twitter Consumer Secret',
   TWITTER_CALLBACK: process.env.TWITTER_CALLBACK || 'Twitter Callback URL',
   YAHOO_SECRET: process.env.YAHOO_SECRET || 'Yahoo Client Secret',
-  DB: process.env.DB || 'nedb',
+  DB: process.env.DB || 'dynamodb',
+  DYNAMODB_ENDPOINT: 'http://localhost:8000',
+  DYNAMODB_ACCESSKYEID: 'AKIAJ3NJK4X4WYYEBTYQ',
+  DYNAMODB_SECRETACCESKEY: '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',
+  DYNAMODB_REGION: 'us-west-2',
   NEDB_USER_FILE: process.env.NEDB_USER_FILE || '/tmp/users.nedb',
-  NEDB_NOTES_FILE: process.env.NEDB_NOTES_FILE || '/tmp/notes.nedb'
+  NEDB_NOTES_FILE: process.env.NEDB_NOTES_FILE || '/tmp/notes.nedb',
+  gcloud: {  projectId: '...' },
 };

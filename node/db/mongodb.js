@@ -1,6 +1,6 @@
 'use strict';
 
-var config = require('./config');
+var config = require('../config');
 var mongoose = require('mongoose');
 var ObjectId = require('mongoose').Schema.Types.ObjectId;
 
