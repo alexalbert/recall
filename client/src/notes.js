@@ -1,7 +1,7 @@
 import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {inject} from 'aurelia-framework';
 import {ServerApi} from './server-api';
-import autosizeTextarea from 'jackmoore/autosize@3.0.8/dist/autosize'
+import autosizeTextarea from './autosize';
 
 @inject(AuthService, ServerApi)
 export class Notes {
