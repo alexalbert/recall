@@ -1,0 +1,16 @@
+node_modules
+jspm_packages/*.map
+jspm_packages/*.src.js
+jspm_packages_old
+node_modules_old
+bower_components
+.idea
+.DS_STORE
+/dist
+build/reports
+node/node_modules
+client/build
+client/doc
+client/src
+client/test
+client/styles
