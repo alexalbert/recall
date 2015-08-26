@@ -42,7 +42,7 @@ function createTableUser() {
     }
   };
 
-  reateTable(params);
+  createTable(params);
 }
 
 
