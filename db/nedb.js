@@ -6,47 +6,6 @@ var Datastore = require('nedb');
 
 ////////////////////////  USER /////////////////////////
 
-// var userSchema = new mongoose.Schema({
-//   email: { type: String, unique: true, lowercase: true },
-//   password: { type: String, select: false },
-//   displayName: String,
-//   picture: String,
-//   facebook: String,
-//   foursquare: String,
-//   google: String,
-//   github: String,
-//   linkedin: String,
-//   live: String,
-//   yahoo: String,
-//   twitter: String
-// });
-//
-// userSchema.pre('save', function(next) {
-//   var user = this;
-//   if (!user.isModified('password')) {
-//     return next();
-//   }
-//   bcrypt.genSalt(10, function(err, salt) {
-//     bcrypt.hash(user.password, salt, function(err, hash) {
-//       user.password = hash;
-//       next();
-//     });
-//   });
-// });
-//
-// userSchema.methods.comparePassword = function(password, done) {
-//   bcrypt.compare(password, this.password, function(err, isMatch) {
-//     done(err, isMatch);
-//   });
-// };
-
-//var user = mongoose.model('User', userSchema);
-
-// var User = function () {
-//     return user;
-// }
-
-
   var Users = new Datastore({filename: config.NEDB_USER_FILE, autoload: true});
 
   var method = User.prototype;
@@ -91,15 +50,6 @@ function NewUser() { return new User(); }
 ////////////////////////  ITEM /////////////////////////
 
 var Notes = new Datastore({filename: config.NEDB_NOTES_FILE, autoload: true});
-
-// var itemSchema = new mongoose.Schema({
-//   _id: ObjectId,
-//   userId: ObjectId,
-//   text: { type: String },
-//   tags: { type: [String], index: true },
-//   ts_cre: Date,
-//   ts_upd: Date,
-// });
 
 var GetNotes = function(id, tag, cb) {
   var query = {userId: id};

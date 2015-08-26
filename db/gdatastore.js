@@ -1,6 +1,6 @@
-// UNFINISHED
-
 'use strict';
+
+// UNFINISHED
 
 var config = require('../config');
 var gcloud = require('gcloud');

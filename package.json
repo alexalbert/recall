@@ -1,8 +1,8 @@
 {
-  "name": "recall",
-  "version": "1.0.0",
+  "name": "Total Recall",
+  "version": "0.1",
   "description": "Demo app",
-  "main": "server,js",
+  "main": "server.js",
   "dependencies": {
     "asn1": "^0.1.11",
     "array-to-map": "^1.0.2",
