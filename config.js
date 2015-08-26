@@ -15,7 +15,7 @@ module.exports = {
   DYNAMODB_ENDPOINT: 'http://localhost:8000',
   DYNAMODB_ACCESSKYEID: 'AKIAJ3NJK4X4WYYEBTYQ',
   DYNAMODB_SECRETACCESKEY: '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',
-  DYNAMODB_REGION: 'us-west-2',
+  DYNAMODB_REGION: 'us-east-1',
   NEDB_USER_FILE: process.env.NEDB_USER_FILE || '/tmp/users.nedb',
   NEDB_NOTES_FILE: process.env.NEDB_NOTES_FILE || '/tmp/notes.nedb',
   gcloud: {  projectId: '...' },
