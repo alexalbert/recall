@@ -1,0 +1,180 @@
+<template id="dist/app.html!view">
+  <require from="./nav-bar"></require>
+
+  <nav-bar router.bind="router"></nav-bar>
+
+  <div class="page-host">
+    <router-view></router-view>
+  </div>
+</template>
+<template id="dist/login.html!view">
+  <section class="au-animate">
+    <div class="center-block">
+    <button class="btn btn-google-plus" click.delegate="authenticate('google')">
+            <span class="ion-social-googleplus"></span>Sign in with Google
+    </button>
+  </div>
+  </section>
+</template>
+<template id="dist/nav-bar.html!view">
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle Navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        <i class="fa fa-home"></i>
+        <span>${router.title}</span>
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
+          <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" href.bind="row.href">${row.title}</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="nav navbar-nav">
+          <a show.bind="!userName" href="#/login" style="margin-right: 100px">Login</a>
+          <a show.bind="userName" href="#/profile" style="margin-right: 100px">Hello ${userName}!</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="loader" if.bind="router.isNavigating">
+          <i class="fa fa-spinner fa-spin fa-2x"></i>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</template>
+<template id="dist/notes.html!view">
+  <section class="au-animate">
+    <panel>
+    <div class="row">
+        <div class="col-xs-1" style="margin-top: 70px">
+          <div repeat.for="tag of tags">
+            <label click.delegate="$parent.tagClicked(tag)" style="color: ${tag === $parent.selectedTag ? 'red' : 'black'}">${tag}</label>
+          </div>
+        </div>
+        <div class="col-xs-11">
+          <div class="row" style="margin-top: 20px">
+            <input type="text" class="col-xs-4  input-mini" style="margin-left: 17px" placeholder="keywords" value.bind="keywords">
+            <button class="col-xs-1 btn btn-xs btn-primary" style="margin-left: 10px" click.trigger="search()" disabled.bind="!keywords.length">Search</button>
+            <button class="col-xs-1 btn btn-xs btn-primary" style="margin-left: 10px" click.trigger="resetSearch()" disabled.bind="!keywords.length">Reset</button>
+            <button class="col-xs-1 btn btn-xs btn-primary pull-right" style="margin-right: 17px" click.trigger="newNote()">New Note</button>
+          </div>
+          <div repeat.for="note of notes" style="margin-top: 15px">
+              <textarea class="form-control custom-control" style="background: aliceblue" placeholder="text" value.bind="note.text | updateDb : $parent : $index">              </textarea>
+              <textarea class="form-control custom-control" style="background: lavender" placeholder="tags" rows="1" value.bind="note.tags | tag : $parent : $index">              </textarea>
+              <div class="row" show.bind="note.ts_cre">
+                <label class="label label-default pull-right" style="margin-right: 15px">Created:  ${note.ts_cre | dateFormat}</label>
+                <label class="label label-default pull-right" style="margin-right: 15px">Updated:  ${note.ts_upd | dateFormat}</label>
+              </div>
+            </div>
+        </div>
+      </div>
+</panel>
+  </section>
+</template>
+<template id="dist/profile.html!view">
+  <section class="au-animate">
+    <div class="container">
+  <div class="panel panel-default col-md-6">
+    <div class="panel-heading">Profile</div>
+    <div class="panel-body">
+      <legend><i class="ion-clipboard"></i> Edit My Profile</legend>
+      <form method="post" ng-submit="updateProfile()">
+        <div class="form-group">
+          <label class="control-label">Profile Picture</label>
+          <img class="profile-picture" src.bind="profile.picture || 'http://placehold.it/100x100'">
+        </div>
+        <div class="form-group">
+          <label class="control-label"><i class="ion-person"></i> Display Name</label>
+          <input type="text" class="form-control" value.bind="profile.displayName">
+        </div>
+        <div class="form-group">
+          <label class="control-label"><i class="ion-at"></i> Email Address</label>
+          <input type="email" class="form-control" value.bind="profile.email">
+        </div>
+        <button class="btn btn-lg btn-success">Update Information</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel panel-default col-md-6">
+    <div class="panel-heading">Accounts</div>
+    <div class="panel-body">
+      <legend><i class="ion-link"></i> Linked Accounts</legend>
+      <div class="btn-group-vertical">
+        <button class="btn btn-sm btn-danger" if.bind="profile.facebook" click.delegate="unlink('facebook')">
+          <i class="ion-social-facebook"></i> Unlink Facebook Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.facebook" click.delegate="link('facebook')">
+          <i class="ion-social-facebook"></i> Link Facebook Account
+        </button>
+
+        <button class="btn btn-sm btn-danger" if.bind="profile.google" click.delegate="unlink('google')">
+          <i class="ion-social-googleplus"></i> Unlink Google Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.google" click.delegate="link('google')">
+          <i class="ion-social-googleplus"></i> Link Google Account
+        </button>
+
+        <button class="btn btn-sm btn-danger" if.bind="profile.linkedin" click.delegate="unlink('linkedin')">
+          <i class="ion-social-linkedin"></i> Unlink LinkedIn Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.linkedin" click.delegate="link('linkedin')">
+          <i class="ion-social-linkedin"></i> Link LinkedIn Account
+        </button>
+
+        <button class="btn btn-sm btn-danger" if.bind="profile.twitter" click.delegate="unlink('twitter')">
+          <i class="ion-social-twitter"></i> Unlink Twitter Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.twitter" click.delegate="link('twitter')">
+          <i class="ion-social-twitter"></i> Link Twitter Account
+        </button>
+
+        <button class="btn btn-sm btn-primary" click.delegate="logout()">
+          <i class="ion-social-twitter"></i> LOGOUT
+        </button>
+
+        <!-- <button class="btn btn-sm btn-danger" if.bind="profile.github" click.delegate="unlink('github')">
+          <i class="ion-social-github"></i> Unlink GitHub Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.github" click.delegate="link('github')">
+          <i class="ion-social-github"></i> Link GitHub Account
+        </button>
+
+        <button class="btn btn-sm btn-danger" if.bind="profile.foursquare" click.delegate="unlink('foursquare')">
+          <i class="ion-social-foursquare"></i> Unlink Foursquare Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.foursquare" click.delegate="link('foursquare')">
+          <i class="ion-social-foursquare"></i> Link Foursquare Account
+        </button>
+
+        <button class="btn btn-sm btn-danger" if.bind="profile.yahoo" click.delegate="unlink('yahoo')">
+          <i class="ion-social-yahoo"></i> Unlink Yahoo Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.yahoo" click.delegate="link('yahoo')">
+          <i class="ion-social-yahoo"></i> Link Yahoo Account
+        </button>
+
+        <button class="btn btn-sm btn-danger" if.bind="profile.live" click.delegate="unlink('live')">
+          <i class="ion-social-windows"></i> Unlink Windows Live Account
+        </button>
+        <button class="btn btn-sm btn-primary" if.bind="!profile.live" click.delegate="link('live')">
+          <i class="ion-social-windows"></i> Link Windows Live Account
+        </button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+  </section>
+</template>

@@ -3,8 +3,8 @@ jspm_packages/*.map
 jspm_packages/*.src.js
 jspm_packages_old
 node_modules_old
+node_modules_new
 bower_components
 .idea
 .DS_STORE
-/dist
 build/reports
