@@ -12,7 +12,7 @@ module.exports = {
   TWITTER_CALLBACK: process.env.TWITTER_CALLBACK || 'Twitter Callback URL',
   YAHOO_SECRET: process.env.YAHOO_SECRET || 'Yahoo Client Secret',
   DB: process.env.DB || 'dynamodb',
-  DYNAMODB_ENDPOINT: 'http://localhost:8000',
+  DYNAMODB_ENDPOINT: 'dynamodb.us-east-1.amazonaws.com',
   DYNAMODB_ACCESSKYEID: 'AKIAJ3NJK4X4WYYEBTYQ',
   DYNAMODB_SECRETACCESKEY: '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',
   DYNAMODB_REGION: 'us-east-1',
