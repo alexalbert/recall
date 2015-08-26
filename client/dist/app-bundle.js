@@ -15436,7 +15436,7 @@ _removeDefine();
 })();
 (function() {
 var _removeDefine = System.get("@@amd-helpers").createDefine();
-define("github:aurelia/templating-router@0.14.1/route-loader.js", ["exports", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/templating@0.13.16.js", "github:aurelia/router@0.10.4.js", "github:aurelia/path@0.8.1.js", "github:aurelia/metadata@0.7.2.js"], function(exports, _aureliaDependencyInjection, _aureliaTemplating, _aureliaRouter, _aureliaPath, _aureliaMetadata) {
+define("github:aurelia/templating-router@0.14.1/route-href.js", ["exports", "github:aurelia/templating@0.13.16.js", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/router@0.10.4.js"], function(exports, _aureliaTemplating, _aureliaDependencyInjection, _aureliaRouter) {
   'use strict';
   exports.__esModule = true;
   function _classCallCheck(instance, Constructor) {
@@ -15444,51 +15444,43 @@ define("github:aurelia/templating-router@0.14.1/route-loader.js", ["exports", "g
       throw new TypeError('Cannot call a class as a function');
     }
   }
-  function _inherits(subClass, superClass) {
-    if (typeof superClass !== 'function' && superClass !== null) {
-      throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
+  var RouteHref = (function() {
+    function RouteHref(router, element) {
+      _classCallCheck(this, _RouteHref);
+      this.router = router;
+      this.element = element;
     }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-        value: subClass,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }});
-    if (superClass)
-      subClass.__proto__ = superClass;
-  }
-  var TemplatingRouteLoader = (function(_RouteLoader) {
-    function TemplatingRouteLoader(compositionEngine) {
-      _classCallCheck(this, _TemplatingRouteLoader);
-      _RouteLoader.call(this);
-      this.compositionEngine = compositionEngine;
-    }
-    _inherits(TemplatingRouteLoader, _RouteLoader);
-    var _TemplatingRouteLoader = TemplatingRouteLoader;
-    _TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
-      var childContainer = router.container.createChild(),
-          instruction = {
-            viewModel: _aureliaPath.relativeToFile(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
-            childContainer: childContainer,
-            view: config.view || config.viewStrategy
-          };
-      childContainer.getChildRouter = function() {
-        var childRouter;
-        childContainer.registerHandler(_aureliaRouter.Router, function(c) {
-          return childRouter || (childRouter = router.createChild(childContainer));
-        });
-        return childContainer.get(_aureliaRouter.Router);
-      };
-      return this.compositionEngine.createViewModel(instruction).then(function(instruction) {
-        instruction.executionContext = instruction.viewModel;
-        instruction.router = router;
-        return instruction;
-      });
+    var _RouteHref = RouteHref;
+    _RouteHref.prototype.bind = function bind() {
+      this.processChange();
     };
-    TemplatingRouteLoader = _aureliaDependencyInjection.inject(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
-    return TemplatingRouteLoader;
-  })(_aureliaRouter.RouteLoader);
-  exports.TemplatingRouteLoader = TemplatingRouteLoader;
+    _RouteHref.prototype.attributeChanged = function attributeChanged(value, previous) {
+      if (previous) {
+        this.element.removeAttribute(previous);
+      }
+      this.processChange();
+    };
+    _RouteHref.prototype.processChange = function processChange() {
+      var href = this.router.generate(this.route, this.params);
+      this.element.setAttribute(this.attribute, href);
+    };
+    RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
+    RouteHref = _aureliaTemplating.bindable({
+      name: 'attribute',
+      defaultValue: 'href'
+    })(RouteHref) || RouteHref;
+    RouteHref = _aureliaTemplating.bindable({
+      name: 'params',
+      changeHandler: 'processChange'
+    })(RouteHref) || RouteHref;
+    RouteHref = _aureliaTemplating.bindable({
+      name: 'route',
+      changeHandler: 'processChange'
+    })(RouteHref) || RouteHref;
+    RouteHref = _aureliaTemplating.customAttribute('route-href')(RouteHref) || RouteHref;
+    return RouteHref;
+  })();
+  exports.RouteHref = RouteHref;
 });
 
 _removeDefine();
@@ -15564,7 +15556,7 @@ _removeDefine();
 })();
 (function() {
 var _removeDefine = System.get("@@amd-helpers").createDefine();
-define("github:aurelia/templating-router@0.14.1/route-href.js", ["exports", "github:aurelia/templating@0.13.16.js", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/router@0.10.4.js"], function(exports, _aureliaTemplating, _aureliaDependencyInjection, _aureliaRouter) {
+define("github:aurelia/templating-router@0.14.1/route-loader.js", ["exports", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/templating@0.13.16.js", "github:aurelia/router@0.10.4.js", "github:aurelia/path@0.8.1.js", "github:aurelia/metadata@0.7.2.js"], function(exports, _aureliaDependencyInjection, _aureliaTemplating, _aureliaRouter, _aureliaPath, _aureliaMetadata) {
   'use strict';
   exports.__esModule = true;
   function _classCallCheck(instance, Constructor) {
@@ -15572,43 +15564,51 @@ define("github:aurelia/templating-router@0.14.1/route-href.js", ["exports", "git
       throw new TypeError('Cannot call a class as a function');
     }
   }
-  var RouteHref = (function() {
-    function RouteHref(router, element) {
-      _classCallCheck(this, _RouteHref);
-      this.router = router;
-      this.element = element;
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== 'function' && superClass !== null) {
+      throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
     }
-    var _RouteHref = RouteHref;
-    _RouteHref.prototype.bind = function bind() {
-      this.processChange();
+    subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }});
+    if (superClass)
+      subClass.__proto__ = superClass;
+  }
+  var TemplatingRouteLoader = (function(_RouteLoader) {
+    function TemplatingRouteLoader(compositionEngine) {
+      _classCallCheck(this, _TemplatingRouteLoader);
+      _RouteLoader.call(this);
+      this.compositionEngine = compositionEngine;
+    }
+    _inherits(TemplatingRouteLoader, _RouteLoader);
+    var _TemplatingRouteLoader = TemplatingRouteLoader;
+    _TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
+      var childContainer = router.container.createChild(),
+          instruction = {
+            viewModel: _aureliaPath.relativeToFile(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
+            childContainer: childContainer,
+            view: config.view || config.viewStrategy
+          };
+      childContainer.getChildRouter = function() {
+        var childRouter;
+        childContainer.registerHandler(_aureliaRouter.Router, function(c) {
+          return childRouter || (childRouter = router.createChild(childContainer));
+        });
+        return childContainer.get(_aureliaRouter.Router);
+      };
+      return this.compositionEngine.createViewModel(instruction).then(function(instruction) {
+        instruction.executionContext = instruction.viewModel;
+        instruction.router = router;
+        return instruction;
+      });
     };
-    _RouteHref.prototype.attributeChanged = function attributeChanged(value, previous) {
-      if (previous) {
-        this.element.removeAttribute(previous);
-      }
-      this.processChange();
-    };
-    _RouteHref.prototype.processChange = function processChange() {
-      var href = this.router.generate(this.route, this.params);
-      this.element.setAttribute(this.attribute, href);
-    };
-    RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.bindable({
-      name: 'attribute',
-      defaultValue: 'href'
-    })(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.bindable({
-      name: 'params',
-      changeHandler: 'processChange'
-    })(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.bindable({
-      name: 'route',
-      changeHandler: 'processChange'
-    })(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.customAttribute('route-href')(RouteHref) || RouteHref;
-    return RouteHref;
-  })();
-  exports.RouteHref = RouteHref;
+    TemplatingRouteLoader = _aureliaDependencyInjection.inject(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
+    return TemplatingRouteLoader;
+  })(_aureliaRouter.RouteLoader);
+  exports.TemplatingRouteLoader = TemplatingRouteLoader;
 });
 
 _removeDefine();
@@ -15639,6 +15639,139 @@ define("github:aurelia/templating-resources@0.13.2/aurelia-templating-resources.
   exports.Replaceable = _replaceable.Replaceable;
   exports.Focus = _focus.Focus;
   exports.configure = configure;
+});
+
+_removeDefine();
+})();
+(function() {
+var _removeDefine = System.get("@@amd-helpers").createDefine();
+define("github:aurelia/templating-resources@0.13.2/with.js", ["exports", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/templating@0.13.16.js"], function(exports, _aureliaDependencyInjection, _aureliaTemplating) {
+  'use strict';
+  exports.__esModule = true;
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError('Cannot call a class as a function');
+    }
+  }
+  var With = (function() {
+    function With(viewFactory, viewSlot) {
+      _classCallCheck(this, _With);
+      this.viewFactory = viewFactory;
+      this.viewSlot = viewSlot;
+    }
+    var _With = With;
+    _With.prototype.valueChanged = function valueChanged(newValue) {
+      if (!this.view) {
+        this.view = this.viewFactory.create(newValue);
+        this.viewSlot.add(this.view);
+      } else {
+        this.view.bind(newValue);
+      }
+    };
+    With = _aureliaDependencyInjection.inject(_aureliaTemplating.BoundViewFactory, _aureliaTemplating.ViewSlot)(With) || With;
+    With = _aureliaTemplating.templateController(With) || With;
+    With = _aureliaTemplating.customAttribute('with')(With) || With;
+    return With;
+  })();
+  exports.With = With;
+});
+
+_removeDefine();
+})();
+(function() {
+var _removeDefine = System.get("@@amd-helpers").createDefine();
+define("github:aurelia/templating-resources@0.13.2/if.js", ["exports", "github:aurelia/templating@0.13.16.js", "github:aurelia/dependency-injection@0.9.1.js"], function(exports, _aureliaTemplating, _aureliaDependencyInjection) {
+  'use strict';
+  exports.__esModule = true;
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError('Cannot call a class as a function');
+    }
+  }
+  var If = (function() {
+    function If(viewFactory, viewSlot) {
+      _classCallCheck(this, _If);
+      this.viewFactory = viewFactory;
+      this.viewSlot = viewSlot;
+      this.showing = false;
+    }
+    var _If = If;
+    _If.prototype.bind = function bind(executionContext) {
+      this.executionContext = executionContext;
+      this.valueChanged(this.value);
+    };
+    _If.prototype.valueChanged = function valueChanged(newValue) {
+      if (!newValue) {
+        if (this.view) {
+          this.viewSlot.remove(this.view);
+          this.view.unbind();
+        }
+        this.showing = false;
+        return;
+      }
+      if (!this.view) {
+        this.view = this.viewFactory.create(this.executionContext);
+      }
+      if (!this.showing) {
+        this.showing = true;
+        if (!this.view.isBound) {
+          this.view.bind();
+        }
+        this.viewSlot.add(this.view);
+      }
+    };
+    If = _aureliaDependencyInjection.inject(_aureliaTemplating.BoundViewFactory, _aureliaTemplating.ViewSlot)(If) || If;
+    If = _aureliaTemplating.templateController(If) || If;
+    If = _aureliaTemplating.customAttribute('if')(If) || If;
+    return If;
+  })();
+  exports.If = If;
+});
+
+_removeDefine();
+})();
+(function() {
+var _removeDefine = System.get("@@amd-helpers").createDefine();
+define("github:aurelia/templating-resources@0.13.2/show.js", ["exports", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/templating@0.13.16.js"], function(exports, _aureliaDependencyInjection, _aureliaTemplating) {
+  'use strict';
+  exports.__esModule = true;
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError('Cannot call a class as a function');
+    }
+  }
+  function addStyleString(str) {
+    var node = document.createElement('style');
+    node.innerHTML = str;
+    node.type = 'text/css';
+    document.head.appendChild(node);
+  }
+  if (!!HTMLElement.prototype.createShadowRoot) {
+    addStyleString('body /deep/ .aurelia-hide { display:none !important; }');
+  } else {
+    addStyleString('.aurelia-hide { display:none !important; }');
+  }
+  var Show = (function() {
+    function Show(element) {
+      _classCallCheck(this, _Show);
+      this.element = element;
+    }
+    var _Show = Show;
+    _Show.prototype.valueChanged = function valueChanged(newValue) {
+      if (newValue) {
+        this.element.classList.remove('aurelia-hide');
+      } else {
+        this.element.classList.add('aurelia-hide');
+      }
+    };
+    _Show.prototype.bind = function bind(executionContext) {
+      this.valueChanged(this.value);
+    };
+    Show = _aureliaDependencyInjection.inject(Element)(Show) || Show;
+    Show = _aureliaTemplating.customAttribute('show')(Show) || Show;
+    return Show;
+  })();
+  exports.Show = Show;
 });
 
 _removeDefine();
@@ -15811,93 +15944,6 @@ define("github:aurelia/templating-resources@0.13.2/compose.js", ["exports", "git
       composer.currentViewModel = next ? next.executionContext : null;
     });
   }
-});
-
-_removeDefine();
-})();
-(function() {
-var _removeDefine = System.get("@@amd-helpers").createDefine();
-define("github:aurelia/templating-resources@0.13.2/if.js", ["exports", "github:aurelia/templating@0.13.16.js", "github:aurelia/dependency-injection@0.9.1.js"], function(exports, _aureliaTemplating, _aureliaDependencyInjection) {
-  'use strict';
-  exports.__esModule = true;
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function');
-    }
-  }
-  var If = (function() {
-    function If(viewFactory, viewSlot) {
-      _classCallCheck(this, _If);
-      this.viewFactory = viewFactory;
-      this.viewSlot = viewSlot;
-      this.showing = false;
-    }
-    var _If = If;
-    _If.prototype.bind = function bind(executionContext) {
-      this.executionContext = executionContext;
-      this.valueChanged(this.value);
-    };
-    _If.prototype.valueChanged = function valueChanged(newValue) {
-      if (!newValue) {
-        if (this.view) {
-          this.viewSlot.remove(this.view);
-          this.view.unbind();
-        }
-        this.showing = false;
-        return;
-      }
-      if (!this.view) {
-        this.view = this.viewFactory.create(this.executionContext);
-      }
-      if (!this.showing) {
-        this.showing = true;
-        if (!this.view.isBound) {
-          this.view.bind();
-        }
-        this.viewSlot.add(this.view);
-      }
-    };
-    If = _aureliaDependencyInjection.inject(_aureliaTemplating.BoundViewFactory, _aureliaTemplating.ViewSlot)(If) || If;
-    If = _aureliaTemplating.templateController(If) || If;
-    If = _aureliaTemplating.customAttribute('if')(If) || If;
-    return If;
-  })();
-  exports.If = If;
-});
-
-_removeDefine();
-})();
-(function() {
-var _removeDefine = System.get("@@amd-helpers").createDefine();
-define("github:aurelia/templating-resources@0.13.2/with.js", ["exports", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/templating@0.13.16.js"], function(exports, _aureliaDependencyInjection, _aureliaTemplating) {
-  'use strict';
-  exports.__esModule = true;
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function');
-    }
-  }
-  var With = (function() {
-    function With(viewFactory, viewSlot) {
-      _classCallCheck(this, _With);
-      this.viewFactory = viewFactory;
-      this.viewSlot = viewSlot;
-    }
-    var _With = With;
-    _With.prototype.valueChanged = function valueChanged(newValue) {
-      if (!this.view) {
-        this.view = this.viewFactory.create(newValue);
-        this.viewSlot.add(this.view);
-      } else {
-        this.view.bind(newValue);
-      }
-    };
-    With = _aureliaDependencyInjection.inject(_aureliaTemplating.BoundViewFactory, _aureliaTemplating.ViewSlot)(With) || With;
-    With = _aureliaTemplating.templateController(With) || With;
-    With = _aureliaTemplating.customAttribute('with')(With) || With;
-    return With;
-  })();
-  exports.With = With;
 });
 
 _removeDefine();
@@ -16351,52 +16397,6 @@ define("github:aurelia/templating-resources@0.13.2/sanitize-html.js", ["exports"
     return SanitizeHtmlValueConverter;
   })();
   exports.SanitizeHtmlValueConverter = SanitizeHtmlValueConverter;
-});
-
-_removeDefine();
-})();
-(function() {
-var _removeDefine = System.get("@@amd-helpers").createDefine();
-define("github:aurelia/templating-resources@0.13.2/show.js", ["exports", "github:aurelia/dependency-injection@0.9.1.js", "github:aurelia/templating@0.13.16.js"], function(exports, _aureliaDependencyInjection, _aureliaTemplating) {
-  'use strict';
-  exports.__esModule = true;
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function');
-    }
-  }
-  function addStyleString(str) {
-    var node = document.createElement('style');
-    node.innerHTML = str;
-    node.type = 'text/css';
-    document.head.appendChild(node);
-  }
-  if (!!HTMLElement.prototype.createShadowRoot) {
-    addStyleString('body /deep/ .aurelia-hide { display:none !important; }');
-  } else {
-    addStyleString('.aurelia-hide { display:none !important; }');
-  }
-  var Show = (function() {
-    function Show(element) {
-      _classCallCheck(this, _Show);
-      this.element = element;
-    }
-    var _Show = Show;
-    _Show.prototype.valueChanged = function valueChanged(newValue) {
-      if (newValue) {
-        this.element.classList.remove('aurelia-hide');
-      } else {
-        this.element.classList.add('aurelia-hide');
-      }
-    };
-    _Show.prototype.bind = function bind(executionContext) {
-      this.valueChanged(this.value);
-    };
-    Show = _aureliaDependencyInjection.inject(Element)(Show) || Show;
-    Show = _aureliaTemplating.customAttribute('show')(Show) || Show;
-    return Show;
-  })();
-  exports.Show = Show;
 });
 
 _removeDefine();
@@ -17973,10 +17973,10 @@ System.register("config", [], function(_export) {
     setters: [],
     execute: function() {
       config = {
-        saveNoteURL: "http://localhost:9000/api/saveNote",
-        getTagsURL: "http://localhost:9000/api/getTags",
-        getNotesURL: "http://localhost:9000/api/getNotes",
-        searchNotesURL: "http://localhost:9000/api/searchNotes"
+        saveNoteURL: "/api/saveNote",
+        getTagsURL: "/api/getTags",
+        getNotesURL: "/api/getNotes",
+        searchNotesURL: "/api/searchNotes"
       };
       _export("config", config);
     }
