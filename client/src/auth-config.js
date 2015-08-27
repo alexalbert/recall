@@ -35,9 +35,10 @@ var configForDevelopment = {
 };
 
 var configForProduction = {
+  loginRedirect: '/',
     providers: {
         google: {
-            clientId: '239531826023-3ludu3934rmcra3oqscc1gid3l9o497i.apps.googleusercontent.com'
+          clientId: '295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'
         }
         ,
         linkedin:{
