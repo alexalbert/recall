@@ -1,7 +1,7 @@
 {
-  "name": "Total Recall",
-  "version": "0.1",
-  "description": "Demo app.",
+  "name": "TotalRecall",
+  "version": "0.1.0",
+  "description": "Demo app",
   "keywords": [
     "aurelia",
     "nodejs",
