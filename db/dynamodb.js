@@ -3,6 +3,7 @@
 // Stopgap implementation, highly inefficient.
 
 var config = require('../config');
+var bcrypt = require('bcryptjs');
 var AWS = require('aws-sdk');
 
 AWS.config.update({
@@ -137,8 +138,11 @@ function NewUser() {
   return new User();
 }
 
-method.save = function(user, cb) {
-  if (!user._id) user._id = guid();
+
+function _save(user, cb) {
+  if (!user._id) {
+    user._id = guid();
+  }
 
   var item = wrap(user);
 
@@ -146,37 +150,53 @@ method.save = function(user, cb) {
     TableName: "User",
     Item: item
   };
+
   dynamodb.putItem(params, function(err, data) {
     if (err) console.log('save ' + err);
     cb(null, data);
   });
 }
 
+method.save = function(user, cb) {
+  if (!user._id && user.password) {
+    bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.hash(user.password, salt, function(err, hash) {
+        user.password = hash;
+        _save(user, cb);
+      });
+    });
+  }
+}
+
 method.findOne = function(query, cb) {
   var params = {
     TableName: "User"
   };
+  // console.log("===================query " + JSON.stringify(query, null, 2));
+  // console.log("CB " + cb);
+  // console.log("CB " + JSON.stringify(cb, null, 2));
 
   dynamodb.scan(params, function(err, data) {
     if (err) {
-      console.log("User.findOne " + JSON.stringify(err, null, 2));
+//      console.log("User.findOne " + JSON.stringify(err, null, 2));
       cb(err);
     } else {
       var keys = Object.keys(query);
-      console.log("User.findOne data " + JSON.stringify(data, null, 2));
+      // console.log("User.findOne data " + JSON.stringify(data, null, 2));
 
       var match = null;
       if (data.Items) {
         match = data.Items.filter(function(item) {
           return keys.every(function(k) {
-            return item[k]['S'] === query[k];
+            return item[k] && item[k]['S'] === query[k];
           });
         });
       }
       if (match === null || match.length == 0) cb(null, null);
       else {
         var unw = unwrap(match[0])
-        console.log("MATCH " + JSON.stringify(unw, null, 2));
+         console.log("MATCH " + JSON.stringify(unw, null, 2));
+        // console.log("CB " + cb);
         cb(null, unw);
       }
     }
@@ -190,18 +210,19 @@ method.findById = function(id, cb) {
   }, cb)
 }
 
-new NewUser().findOne({
-  google: 'eeeeee'
-}, function(err, data) {
-  console.log('===' + JSON.stringify(data, null, 2));
+
+method.comparePassword = function(password, dbPassword, done) {
+  console.log(password + "  === " + dbPassword);
+bcrypt.compare(password, dbPassword, function(err, isMatch) {
+  done(err, isMatch);
 });
+};
 
 ///////////  NOTES //////////////////////
 var GetNotes = function(id, tag, cb) {
-  console.trace("Here I am!");
   console.log("id " + JSON.stringify(id, null, 2));
   console.log("tag " + JSON.stringify(tag, null, 2));
-  console.log("cb " + JSON.stringify(cb, null, 2));
+  console.log("cb " + cb);
   var params = {
     TableName: "Notes",
     KeyConditions: {
@@ -221,10 +242,10 @@ var GetNotes = function(id, tag, cb) {
   };
   dynamodb.query(params, function(err, data) {
     if (err) {
-      console.log("GetNotes " + JSON.stringify(err, null, 2));
+//      console.log("GetNotes " + JSON.stringify(err, null, 2));
       cb(err);
     } else {
-        console.log("GetNotes " + JSON.stringify(data, null, 2));
+        // console.log("GetNotes " + JSON.stringify(data, null, 2));
         if (data.Count > 0) {
         var res = data.Items.map(function(d) {
           return unwrap(d);

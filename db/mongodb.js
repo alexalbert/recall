@@ -36,12 +36,6 @@ userSchema.pre('save', function(next) {
   });
 });
 
-userSchema.methods.comparePassword = function(password, done) {
-  bcrypt.compare(password, this.password, function(err, isMatch) {
-    done(err, isMatch);
-  });
-};
-
 var user = mongoose.model('User', userSchema);
 
 var method = UserModel.prototype;
@@ -49,6 +43,12 @@ var method = UserModel.prototype;
 
 function UserModel() {
 }
+
+method.comparePassword = function(password, dbPassword, done) {
+  bcrypt.compare(password, dbPassword, function(err, isMatch) {
+    done(err, isMatch);
+  });
+};
 
 method.findById =  function() {
 //  user.find.bind(user);

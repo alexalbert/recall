@@ -105,11 +105,14 @@ app.put('/auth/me', ensureAuthenticated, function(req, res) {
  |--------------------------------------------------------------------------
  */
 app.post('/auth/login', function(req, res) {
-  User.findOne({ email: req.body.email }, '+password', function(err, user) {
+//  User.findOne({ email: req.body.email }, '+password', function(err, user) {  // MONGO
+console.log("---------------LOGIN ");
+
+  User.findOne({ email: req.body.email }, function(err, user) {
     if (!user) {
       return res.status(401).send({ message: 'Wrong email and/or password' });
     }
-    user.comparePassword(req.body.password, function(err, isMatch) {
+    User.comparePassword(req.body.password, user.password, function(err, isMatch) {
       if (!isMatch) {
         return res.status(401).send({ message: 'Wrong email and/or password' });
       }
@@ -128,11 +131,10 @@ app.post('/auth/signup', function(req, res) {
     if (existingUser) {
       return res.status(409).send({ message: 'Email is already taken' });
     }
-    var user = new User({
-      displayName: req.body.displayName,
-      email: req.body.email,
-      password: req.body.password
-    });
+    var user = {};
+    user.displayName = req.body.displayName;
+    user.email = req.body.email;
+    user.password =req.body.password;
     User.save(user, function() {
       res.send({ token: createJWT(user) });
     });
