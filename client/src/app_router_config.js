@@ -20,12 +20,18 @@ export default class{
         nav: false,
         title: 'Notes',
         auth: true
-      }, {
+			}, {
         route: 'login',
         name: 'login',
         moduleId: './login',
         nav: false,
         title: 'Login'
+			}, {
+        route: 'signup',
+        name: 'signup',
+        moduleId: './signup',
+        nav: false,
+        title: 'Signup'
       }, {
         route: 'profile',
         name: 'profile',
