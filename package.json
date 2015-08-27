@@ -1,6 +1,6 @@
 {
-  "name": "Total Recall",
-  "version": "0.1",
+  "name": "TotalRecall",
+  "version": "0.1.0",
   "description": "Demo app",
   "main": "server.js",
   "dependencies": {
