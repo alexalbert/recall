@@ -11,12 +11,17 @@ export class Signup{
 	email='';
 	password='';
 	displayName='';
+  message = '';
 
 	signup(){
 		return this.auth.signup(this.displayName, this.email, this.password)
-		.then((response)=>{
-			console.log("signed up");
-		});
+		.then(out =>{
+      console.log(out.response);
+		},
+    out => {
+      this.message = out.response;
+      console.log(out.response);
+    });
 
 	}
 }

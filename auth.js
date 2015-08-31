@@ -129,7 +129,7 @@ console.log("---------------LOGIN ");
 app.post('/auth/signup', function(req, res) {
   User.findOne({ email: req.body.email }, function(err, existingUser) {
     if (existingUser) {
-      return res.status(409).send({ message: 'Email is already taken' });
+      return res.status(409).send('Email is already taken');
     }
     var user = {};
     user.displayName = req.body.displayName;
