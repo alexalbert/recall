@@ -1,7 +1,9 @@
 var path = require('path');
 
+var serverBaseDir = path.normalize('./..');
 var appRoot = 'src/';
 var outputRoot = 'dist/';
+var nodeStartupScript = 'server.js';
 
 module.exports = {
   root: appRoot,
@@ -12,5 +14,10 @@ module.exports = {
   output: outputRoot,
   doc:'./doc',
   e2eSpecsSrc: 'test/e2e/src/*.js',
-  e2eSpecsDist: 'test/e2e/dist/'
+  e2eSpecsDist: 'test/e2e/dist/',
+  sourceMapRelativePath: '/src',
+  nodeJsPort:5000,
+  webServerPort : 9000,
+  serverBaseDir : serverBaseDir,
+  nodeStartUpScriptPath : path.join( serverBaseDir,  nodeStartupScript)
 };
