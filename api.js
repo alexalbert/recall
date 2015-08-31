@@ -44,8 +44,19 @@ exports.init = function (expapp) {
 
   app.post('/api/saveNote', function(req, res) {
     db.SaveNote(req.body, function(err, doc) {
-
       res.send(req.body._id || doc._id);
+    });
+  });
+
+  app.post('/api/deleteNote', function(req, res) {
+    db.DeleteNote(req.body, function(err, doc) {
+      if (err) {
+        res.send(err);
+        console.log("delete error");
+      } else {
+        res.sendStatus(200);
+        console.log("delete 200");
+    }
     });
   });
 }

@@ -220,9 +220,9 @@ bcrypt.compare(password, dbPassword, function(err, isMatch) {
 
 ///////////  NOTES //////////////////////
 var GetNotes = function(id, tag, cb) {
-  console.log("id " + JSON.stringify(id, null, 2));
-  console.log("tag " + JSON.stringify(tag, null, 2));
-  console.log("cb " + cb);
+  // console.log("id " + JSON.stringify(id, null, 2));
+  // console.log("tag " + JSON.stringify(tag, null, 2));
+  // console.log("cb " + cb);
   var params = {
     TableName: "Notes",
     KeyConditions: {
@@ -330,10 +330,24 @@ var GetTags = function(id, cb) {
         }});
     }
 
+    var DeleteNote = function(note, cb) {
+      var params = {
+        TableName: "Notes",
+        Key: {
+          "userId": {"S": note.userId},
+          "ts_cre": {"S": note.ts_cre}
+          }
+      };
+      dynamodb.deleteItem(params, function(err, data) {
+        cb(err, data);
+      });
+    }
+
     module.exports = {
       SearchNotes: SearchNotes,
       GetNotes: GetNotes,
       GetTags: GetTags,
       SaveNote: SaveNote,
+      DeleteNote: DeleteNote,
       User: NewUser
     }

@@ -64,7 +64,10 @@ export class Notes {
 	}
 
   newNote() {
-		var note = {text:"", tags: this.selectedTag ? [this.selectedTag] : [], id: this.uuid()};
+		var note = {text:"",
+			tags: this.selectedTag ? [this.selectedTag] : [], id: this.uuid(),
+			hasFocus: true
+		};
 		this.notes.unshift(note);
 		this.autosizeNotes();
 	}
@@ -98,6 +101,18 @@ export class Notes {
 			 this.notes = JSON.parse(data.response);
 			 this.autosizeNotes();
 		 });
+ }
+
+ delete(note) {
+	 var ind = -1;
+	 for (var i = 0; i < this.notes.length; i++) {
+		 	 if (this.notes[i]._id === note._id) ind = i;
+		}
+
+		if (ind != -1) {
+			this.server.delete(note).then(() =>
+				this.notes.splice(ind, 1));
+		}
  }
 
  resetSearch() {

@@ -1,12 +1,11 @@
 <template>
   <section class="au-animate">
     <panel>
-    <div class="row">
+      <div class="row">
         <div class="col-xs-1" style="margin-top: 70px">
           <div repeat.for="tag of tags">
             <label click.delegate="$parent.tagClicked(tag)"
-             style="color: ${tag === $parent.selectedTag ? 'red' : 'black'}"
-            >${tag}</label>
+                style="color: ${tag === $parent.selectedTag ? 'red' : 'black'}">${tag}</label>
           </div>
         </div>
         <div class="col-xs-11">
@@ -15,29 +14,39 @@
                 placeholder="keywords" value.bind="keywords">
             <button class="col-xs-1 btn btn-xs btn-primary" style="margin-left: 10px"
                 click.trigger="search()" disabled.bind="!keywords.length">Search</button>
-            <button class="col-xs-1 btn btn-xs btn-primary"  style="margin-left: 10px"
+            <button class="col-xs-1 btn btn-xs btn-primary" style="margin-left: 10px"
                 click.trigger="resetSearch()" disabled.bind="!keywords.length">Reset</button>
-            <button class="col-xs-1 btn btn-xs btn-primary pull-right" style="margin-right: 17px" click.trigger="newNote()">New Note</button>
+            <button class="col-xs-1 btn btn-xs btn-primary pull-right"
+                style="margin-right: 17px" click.trigger="newNote()">New Note</button>
           </div>
           <div repeat.for="note of notes" style="margin-top: 15px">
-              <textarea class='form-control custom-control'
-                style="background: aliceblue"
-                placeholder="text"
-                value.bind="note.text | updateDb : $parent : $index">
-              </textarea>
-              <textarea  class="form-control custom-control"
-                style="background: lavender"
-                placeholder="tags"
-                rows="1"
-                value.bind="note.tags | tag : $parent : $index">
-              </textarea>
-              <div class="row" show.bind="note.ts_cre">
-                <label class="label label-default pull-right" style="margin-right: 15px">Created:  ${note.ts_cre | dateFormat}</label>
-                <label class="label label-default pull-right" style="margin-right: 15px">Updated:  ${note.ts_upd | dateFormat}</label>
+            <div class="row">
+              <div class="col-xs-11">
+                <textarea class='form-control custom-control' style="background: aliceblue"
+                    placeholder="text" value.bind="note.text | updateDb : $parent : $index"
+                    focus.bind="note.hasFocus">
+                </textarea>
+                <textarea class="form-control custom-control" style="background: lavender"
+                    placeholder="tags" rows="1" value.bind="note.tags | tag : $parent : $index">
+                </textarea>
+                <div class="row" show.bind="note.ts_cre">
+                  <label class="label label-default pull-right"
+                      style="margin-right: 15px">Created: ${note.ts_cre | dateFormat}</label>
+                  <label class="label label-default pull-right"
+                      style="margin-right: 15px">Updated: ${note.ts_upd | dateFormat}</label>
+                </div>
+              </div>
+              <div class="col-xs-1">
+                <button class="btn btn-xs" show.bind="note.ts_cre"
+                    style="background-color: rgba(245, 245, 245, 0.4)"
+                    click.delegate="$parent.delete(note)">
+                  <span class="glyphicon glyphicon-remove" style="color: red"></span>
+                </button>
               </div>
             </div>
+          </div>
         </div>
       </div>
-</panel>
+    </panel>
   </section>
 </template>

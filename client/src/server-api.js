@@ -31,7 +31,7 @@ export class ServerApi {
 
 		return this.http.createRequest(config.searchNotesURL + params).asGet().send();
 	}
-	
+
 	updateNote(note) {
 		return this.http.createRequest(config.saveNoteURL)
 			.asPost()
@@ -39,4 +39,14 @@ export class ServerApi {
 			.withHeader('Content-Type', 'application/json')
 			.send();
 	}
+
+	delete(note) {
+		return this.http.createRequest(config.deleteNoteURL)
+			.asPost()
+			.withContent(JSON.stringify(note))
+			.withHeader('Content-Type', 'application/json')
+			.send();
+	}
+
+
 }
