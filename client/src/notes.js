@@ -77,12 +77,16 @@ export class Notes {
 		note.ts_upd = new Date();
 		note.userId = this.userId;
 		if (note.tags === "") delete note.tags;
+		var hasFocus = note.hasFocus;
+		delete note.hasFocus;
 
 		this.addNewTags(note.tags);
 		this.server.updateNote(note)
 			.then(res => {
 				note._id = res.response.replace(/\"/g, "");
 			});
+
+		note.hasFocus = hasFocus;	
 	}
 
 	search() {
