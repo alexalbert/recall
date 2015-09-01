@@ -76,7 +76,7 @@ function createAllTables() {
   dynamodb.listTables({}, function(err, data) {
     if (err) console.log(err, err.stack);
     else {
-      console.log(data);
+      // console.log(data);
       if (data.TableNames.indexOf('User') === -1) {
         createTableUser();
       }
@@ -195,7 +195,7 @@ method.findOne = function(query, cb) {
       if (match === null || match.length == 0) cb(null, null);
       else {
         var unw = unwrap(match[0])
-         console.log("MATCH " + JSON.stringify(unw, null, 2));
+        //  console.log("MATCH " + JSON.stringify(unw, null, 2));
         // console.log("CB " + cb);
         cb(null, unw);
       }
@@ -204,7 +204,7 @@ method.findOne = function(query, cb) {
 }
 
 method.findById = function(id, cb) {
-  console.log("ID =  " + id);
+  // console.log("ID =  " + id);
   this.findOne({
     "_id": id
   }, cb)
@@ -212,7 +212,7 @@ method.findById = function(id, cb) {
 
 
 method.comparePassword = function(password, dbPassword, done) {
-  console.log(password + "  === " + dbPassword);
+  // console.log(password + "  === " + dbPassword);
 bcrypt.compare(password, dbPassword, function(err, isMatch) {
   done(err, isMatch);
 });
@@ -319,13 +319,13 @@ var GetTags = function(id, cb) {
         TableName: "Notes",
         Item: wrapped
       };
-      console.log("SaveNote " + JSON.stringify(params, null, 2));
+      // console.log("SaveNote " + JSON.stringify(params, null, 2));
       dynamodb.putItem(params, function(err, data) {
         if (err) {
-          console.log("SaveNote " + JSON.stringify(err, null, 2));
+          // console.log("SaveNote " + JSON.stringify(err, null, 2));
           cb(err);
         } else {
-          console.log("SaveNote " + JSON.stringify(data, null, 2));
+          // console.log("SaveNote " + JSON.stringify(data, null, 2));
           cb(null, data);
         }});
     }
