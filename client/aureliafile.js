@@ -14,7 +14,11 @@ var bundleCfg = {
         'github:aurelia/templating-router',
         'github:aurelia/loader-default',
         'github:aurelia/history-browser',
-        'github:paulvanbladel/aurelia-auth'
+        'github:aurelia/html-template-element@0.2.0',
+        'github:paulvanbladel/aurelia-auth@0.9.6',
+        'github:paulvanbladel/aurelia-auth@0.9.6/authFilter',
+        'github:webcomponents/webcomponentsjs@0.6.3/HTMLImports.min',
+        'github:aurelia/html-template-element@0.2.0/HTMLTemplateElement.min',
       ],
       options: {
         inject: true
