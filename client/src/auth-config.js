@@ -22,7 +22,7 @@ var configForDevelopment = {
   // storage: 'localStorage',
     providers: {
         google: {
-            clientId: '295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'
+            clientId: process.env.'295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'
         }
         ,
         linkedin:{
@@ -38,7 +38,7 @@ var configForProduction = {
   loginRedirect: '/',
     providers: {
         google: {
-          clientId: '295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'
+          clientId: '295614233056-udfb202vntqdcbu9sit5imdf7at018ea.apps.googleusercontent.com'
         }
         ,
         linkedin:{
