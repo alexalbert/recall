@@ -1,0 +1,199 @@
+<template id="dist/app.html!view">
+  <require from="./nav-bar"></require>
+
+  <nav-bar router.bind="router"></nav-bar>
+
+  <div class="page-host">
+    <router-view></router-view>
+  </div>
+</template>
+<template id="dist/login.html!view">
+<div class="container">
+  <div class="row">
+    <div class="center-form panel col-md-6">
+      <div class="panel-body">
+        <h2 class="text-center" style="margin-bottom: 40px">Log in</h2>
+        <form method="post" name="loginForm">
+          <div class="form-group has-feedback">
+            <input class="form-control input-lg" type="text" name="email" value.bind="email" placeholder="Email" required="" autofocus="">
+            <span class="ion-at form-control-feedback"></span>
+          </div>
+
+          <div class="form-group has-feedback">
+            <input class="form-control input-lg" type="password" name="password" value.bind="password" placeholder="Password" required="">
+            <span class="ion-key form-control-feedback"></span>
+          </div>
+
+          <button type="submit" disabled.bind="!password || !email" click.delegate="login()" class="btn btn-lg  btn-block btn-success">
+            <span class="glyphicon glyphicon-log-in"></span>
+            LOG IN
+          </button>
+          <br>
+
+          <p class="text-center text-muted">
+            <small>Don't have an account yet? <a href="/#/signup">Sign up</a></small>
+          </p>
+
+          <div class="signup-or-separator">
+            <h4 class="text">or</h4>
+            <hr>
+          </div>
+        </form>
+
+        <button class="btn btn-lg  btn-block btn-success" click.delegate="authenticate('google')">
+          <span class="glyphicon glyphicon-log-in"></span>
+          SIGN IN WITH GOOGLE
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
+<template id="dist/nav-bar.html!view">
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle Navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        <i class="fa fa-home"></i>
+        <span>${router.title}</span>
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav" style="color: red">
+        <li repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
+          <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" href.bind="row.href">${row.title}</a>
+        </li>
+      </ul>
+      <span class="navbar-text">Demo app, please don't put critical or confidential data.</span>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="nav navbar-nav">
+          <a show.bind="!userName" href="#/login" style="margin-right: 100px">Login</a>
+          <a show.bind="userName" href="#/profile" style="margin-right: 100px">Hello ${userName}!</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="loader" if.bind="router.isNavigating">
+          <i class="fa fa-spinner fa-spin fa-2x"></i>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</template>
+<template id="dist/notes.html!view">
+  <section class="au-animate">
+    <panel>
+      <!-- BUTTONS -->
+      <div class="row" style="margin-top: 30px">
+            <div class="col-sm-offset-2 col-sm-3">
+              <input type="text" class="form-control" placeholder="keywords" value.bind="keywords">
+            </div>
+            <div class="col-sm-1">
+              <button class="btn btn-sm btn-primary" click.trigger="search()" disabled.bind="!keywords.length">Search</button>
+            </div>
+            <div class="col-sm-1">
+              <button class="btn btn-sm btn-primary" click.trigger="resetSearch()" disabled.bind="!keywords.length">Reset</button>
+            </div>
+          <div class="col-sm-3">
+            <button class="btn btn-sm btn-warning pull-right" click.trigger="newNote()">New Note</button>
+          </div>
+      <!-- BODY -->
+      <div class="row" style="margin-top: 65px">
+        <!-- TAGS -->
+        <div class="col-sm-2">
+          <div repeat.for="tag of tags" style="margin-left: 25px">
+            <label click.delegate="$parent.tagClicked(tag)" style="color: ${tag === $parent.selectedTag ? 'red' : 'black'}">${tag}</label>
+          </div>
+        </div>
+        <!-- NOTES -->
+        <div class="col-sm-10">
+          <div repeat.for="note of notes">
+            <div class="row" style="margin-bottom: 15px">
+              <div class="col-sm-10">
+                <div class="row">
+                  <textarea class="form-control custom-control" style="background: white" placeholder="text" value.bind="note.text | updateDb : $parent : $index" focus.bind="note.hasFocus">                  </textarea>
+                </div>
+                <div class="row">
+                  <textarea class="form-control custom-control" style="background: azure" placeholder="tags" rows="1" value.bind="note.tags | tag : $parent : $index">                  </textarea>
+                </div>
+                <div class="row" show.bind="note.ts_cre">
+                  <div class="pull-right" style="margin-left: 20px">
+                    <span style="font-size:10px;">Updated: ${note.ts_upd | dateFormat}</span>
+                  </div>
+                  <div class="pull-right">
+                    <span style="font-size:10px;">Created: ${note.ts_cre | dateFormat}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- DELETE -->
+              <div class="col-sm-2">
+                <button class="btn btn-sm" show.bind="note.ts_cre" style="background-color: rgba(245, 245, 245, 0.4)" click.delegate="$parent.delete(note)">
+                  <span class="glyphicon glyphicon-remove" style="color: red"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+  </div></panel></section>
+</template>
+<template id="dist/profile.html!view">
+  <section class="au-animate">
+    <div class="container" style="margin-top: 20px">
+      <div class="panel col-md-6">
+        <div class="panel-body">
+          <h2 class="text-center" style="margin-bottom: 40px">Profile</h2>
+          <form>
+            <div class="form-group" show.bind="profile.picture">
+              <img class="profile-picture" src.bind="profile.picture">
+            </div>
+            <div class="form-group">
+              <label class="control-label">
+                <span class="glyphicon glyphicon-user"></span>Name</label>
+              <input type="text" class="form-control input-lg" value.bind="profile.displayName" readonly="true">
+            </div>
+            <div class="form-group" show.bind="profile.email">
+              <label class="control-label">
+                <span class="glyphicon glyphicon-envelope"></span> Email</label>
+              <input type="text" class="form-control input-lg" value.bind="profile.email" readonly="true">
+            </div>
+            <button class="btn btn-lg btn-block btn-warning" click.delegate="logout()">
+              <span class="glyphicon glyphicon-log-out"></span> LOGOUT
+            </button>
+          </form>
+        </div>
+      </div>
+  </div></section>
+</template>
+<template id="dist/signup.html!view">
+  <section class="au-animate">
+    <section class="au-animate">
+      <form role="form" submit.delegate="signup()">
+        <div class="container" style="margin-top: 20px">
+          <div class="center-form panel col-md-6">
+            <div class="panel-body">
+              <h2 class="text-center" style="margin-bottom: 40px">Sign Up</h2>
+              <div class="form-group has-feedback">
+                <input type="text" value.bind="displayName" class="form-control input-lg" id="fn" placeholder="Name">
+              </div>
+              <div class="form-group">
+                <span class="help-inline alert alert-danger pull-right" show.bind="message">${message}</span>
+                <input type="text" value.bind="email" class="form-control input-lg" id="fn" placeholder="Email">
+              </div>
+              <div class="form-group">
+                <input type="text" value.bind="password" class="form-control input-lg" id="ln" placeholder="Password">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-default btn-lg btn-block btn-success">SIGNUP</button>
+          </div>
+        </div>
+      </form>
+    </section>
+</section></template>

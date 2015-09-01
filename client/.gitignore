@@ -1,7 +1,7 @@
 node_modules
-jspm_packages
+jspm_packages/*.map
+jspm_packages/*.src.js
 bower_components
 .idea
 .DS_STORE
-/dist
 build/reports
