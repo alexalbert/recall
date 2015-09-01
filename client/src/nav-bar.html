@@ -14,12 +14,12 @@
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav" style="color: red">
         <li repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
           <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" href.bind="row.href">${row.title}</a>
         </li>
       </ul>
-
+      <span class="navbar-text">Demo app, please don't put critical or confidential data.</span>
       <ul class="nav navbar-nav navbar-right">
         <li class="nav navbar-nav">
           <a  show.bind="!userName" href="#/login" style="margin-right: 100px">Login</a>
