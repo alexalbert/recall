@@ -86,7 +86,7 @@ export class Notes {
 				note._id = res.response.replace(/\"/g, "");
 			});
 
-		note.hasFocus = hasFocus;	
+		note.hasFocus = hasFocus;
 	}
 
 	search() {
@@ -175,7 +175,7 @@ export class UpdateDbValueConverter {
 
 export class DateFormatValueConverter {
 		toView(date) {
-			return new Date(date).toLocaleString();
+			return new Date(date).toLocaleDateString();
 	}
 }
 
