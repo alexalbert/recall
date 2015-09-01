@@ -1,0 +1,60 @@
+<template>
+  <section class="au-animate">
+    <panel>
+      <!-- BUTTONS -->
+      <div class="row" style="margin-top: 30px">
+            <div class="col-sm-offset-2 col-sm-3">
+              <input type="text" class="form-control" placeholder="keywords" value.bind="keywords">
+            </div>
+            <div class="col-sm-1">
+              <button class="btn btn-sm btn-primary" click.trigger="search()" disabled.bind="!keywords.length">Search</button>
+            </div>
+            <div class="col-sm-1">
+              <button class="btn btn-sm btn-primary" click.trigger="resetSearch()" disabled.bind="!keywords.length">Reset</button>
+            </div>
+          <div class="col-sm-3">
+            <button class="btn btn-sm btn-warning pull-right" click.trigger="newNote()">New Note</button>
+          </div>
+      <!-- BODY -->
+      <div class="row"  style="margin-top: 65px">
+        <!-- TAGS -->
+        <div class="col-sm-2">
+          <div repeat.for="tag of tags"  style="margin-left: 25px">
+            <label click.delegate="$parent.tagClicked(tag)" style="color: ${tag === $parent.selectedTag ? 'red' : 'black'}">${tag}</label>
+          </div>
+        </div>
+        <!-- NOTES -->
+        <div class="col-sm-10">
+          <div repeat.for="note of notes">
+            <div class="row"  style="margin-bottom: 15px">
+              <div class="col-sm-10">
+                <div class="row">
+                  <textarea class='form-control custom-control' style="background: white" placeholder="text" value.bind="note.text | updateDb : $parent : $index" focus.bind="note.hasFocus">
+                  </textarea>
+                </div>
+                <div class="row">
+                  <textarea class="form-control custom-control" style="background: azure" placeholder="tags" rows="1" value.bind="note.tags | tag : $parent : $index">
+                  </textarea>
+                </div>
+                <div class="row" show.bind="note.ts_cre">
+                  <div class="pull-right"  style="margin-left: 20px">
+                    <span style="font-size:10px;">Updated: ${note.ts_upd | dateFormat}</span>
+                  </div>
+                  <div class="pull-right">
+                    <span style="font-size:10px;">Created: ${note.ts_cre | dateFormat}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- DELETE -->
+              <div class="col-sm-2">
+                <button class="btn btn-sm" show.bind="note.ts_cre" style="background-color: rgba(245, 245, 245, 0.4)" click.delegate="$parent.delete(note)">
+                  <span class="glyphicon glyphicon-remove" style="color: red"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </panel>
+  </section>
+</template>

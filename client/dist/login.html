@@ -1,0 +1,42 @@
+<template>
+<div class="container">
+  <div class="row">
+    <div class="center-form panel col-md-6">
+      <div class="panel-body">
+        <h2 class="text-center" style="margin-bottom: 40px">Log in</h2>
+        <form method="post"  name="loginForm">
+          <div class="form-group has-feedback">
+            <input class="form-control input-lg" type="text" name="email" value.bind="email" placeholder="Email" required autofocus>
+            <span class="ion-at form-control-feedback"></span>
+          </div>
+
+          <div class="form-group has-feedback">
+            <input class="form-control input-lg" type="password" name="password" value.bind="password" placeholder="Password" required>
+            <span class="ion-key form-control-feedback"></span>
+          </div>
+
+          <button type="submit" disabled.bind="!password || !email" click.delegate="login()" class="btn btn-lg  btn-block btn-success">
+            <span class="glyphicon glyphicon-log-in"></span>
+            LOG IN
+          </button>
+          <br/>
+
+          <p class="text-center text-muted">
+            <small>Don't have an account yet? <a href="/#/signup">Sign up</a></small>
+          </p>
+
+          <div class="signup-or-separator">
+            <h4 class="text">or</h4>
+            <hr>
+          </div>
+        </form>
+
+        <button class="btn btn-lg  btn-block btn-success" click.delegate="authenticate('google')">
+          <span class="glyphicon glyphicon-log-in"></span>
+          SIGN IN WITH GOOGLE
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
