@@ -22,7 +22,7 @@ var configForDevelopment = {
   // storage: 'localStorage',
     providers: {
         google: {
-            clientId: process.env.'295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'
+            clientId: '295614233056-uk5bbi946vqicdj706d6qr7bvee6ve6j.apps.googleusercontent.com'
         }
         ,
         linkedin:{
