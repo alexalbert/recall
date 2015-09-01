@@ -250,9 +250,9 @@ var GetNotes = function(id, tag, cb) {
         var res = data.Items.map(function(d) {
           return unwrap(d);
         });
-
         if (tag) {
           res = res.filter(function(d) {
+            if (!d.tags) return false;
             return d.tags.indexOf(tag) != -1;
           });
         }
